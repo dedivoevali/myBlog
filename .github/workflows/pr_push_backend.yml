@@ -22,10 +22,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test
-        -p/:CollectCoverage=true
-        -p/:CoverletOutput=TestResults/
-        -p/:CoverletOutputFormat=lcov
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutputDirectory=TestResults/ /p:CoverletOutputFormat=lcov
     - name: Publish Coverage Results to coveralls.io
       uses: coverallsapp/github-action@master
       with:
