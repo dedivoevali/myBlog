@@ -1,5 +1,5 @@
 # MyBlog
-
+[![Coverage Status](https://coveralls.io/repos/github/chioroglo/myBlog/badge.svg?branch=slave)](https://coveralls.io/github/chioroglo/myBlog?branch=slave)
 # Used Technologies:
 
 Microsoft SQL Server
