@@ -27,9 +27,10 @@ docker-compose up -d
 ```
 
 2. Install an IDE for development, set up environment to develop .NET Applications (Install .NET 8 SDK)
-3. Then, install Dotnet Entity Framework 8 Core Tools
-https://learn.microsoft.com/en-us/ef/core/cli/dotnet
-This is necessary to manage database migrations.
+3. Then, install Dotnet Entity Framework 8 Core Tools. This is necessary to manage database migrations.
+```shell
+dotnet tool install --global dotnet-ef
+```
 While you've installed CLI (Command Line Interface) for Entity Framework, type in following commands
 ```shell
 # To view the migartions list
