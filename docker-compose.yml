@@ -25,8 +25,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     volumes:
-      - ./.containers/queue/data/:/var/lib/rabbitmq
-      - ./.containers/queue/log/:/var/log/rabbitmq
+      - ./.containers/queue/data/:/var/lib/rabbitmq/mnesia
+      - ./.containers/queue/log/:/var/log/rabbitmq/mnesia
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
