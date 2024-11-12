@@ -13,23 +13,10 @@ import {
 } from '../../shared/assets';
 import {EditProfileCustomModal} from "../CustomModal";
 import {UserInfoCache} from "../../shared/types";
-import "../ProfileHeader/ProfileHeader.scss";
 import { WarningProfileBox } from './WarningsProfileBox/WarningProfileBox';
-
-const avatarStyle: React.CSSProperties = {
-    minWidth: "115px",
-    minHeight: "115px",
-    maxWidth: "320px",
-    maxHeight: "320px",
-    marginTop: "-50%",
-    width: "20vw",
-    height: "20vw"
-}
-
-const internalMarginOfDialog: string = "0 32px";
+import styles from './ProfileHeader.module.scss';
 
 const ProfileHeader = ({user, setUser}: ProfileHeaderProps) => {
-
 
     const authorizedUser = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
 
@@ -61,18 +48,17 @@ const ProfileHeader = ({user, setUser}: ProfileHeaderProps) => {
                                     user={user}
                                     setUser={setUser}/>
 
-            <Paper className="profile-header-wrapper">
-                <Paper elevation={0} className="profile-header-upper-background"/>
+            <Paper className={styles.wrapper}>
+                <Paper elevation={0} className={styles['upper-background']}/>
 
                 <Box style={{
-                    margin: internalMarginOfDialog,
+                    margin: "0 32px",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center"
                 }}>
                     <div>
-                        <Avatar style={avatarStyle} src={avatarLink}
-                                sx={{fontSize: "128px"}}>{getFirstCharOfStringUpperCase(user.username)}</Avatar>
+                        <Avatar className={styles.avatar} src={avatarLink}>{getFirstCharOfStringUpperCase(user.username)}</Avatar>
                     </div>
 
                     <div>
@@ -83,7 +69,7 @@ const ProfileHeader = ({user, setUser}: ProfileHeaderProps) => {
                 </Box>
 
                 <Box style={{
-                    margin: internalMarginOfDialog,
+                    margin: "0 32px",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "self-start",
