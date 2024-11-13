@@ -10,6 +10,8 @@ using Service.Auth;
 using Service.Auth.Passkeys;
 using Service.Messaging;
 using ProfanityFilter.Interfaces;
+using Service.Abstract.Statistics;
+using Service.Statistics;
 
 namespace API.Extensions
 {
@@ -28,6 +30,7 @@ namespace API.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICacheService, RedisDistributedCacheService>();
             services.AddScoped<IUserPunishmentsService, UserPunishmentsService>();
+            services.AddScoped<IContentStatisticsService, ContentStatisticsService>();
             
             // Passkey
             services.AddScoped<IPasskeyAuthService, PasskeyAuthService>();

@@ -16,6 +16,11 @@ namespace DAL.Repositories.Abstract.Base
             _db = db;
         }
 
+        public async Task<bool> ExistsAsync(int id, CancellationToken ct)
+        {
+            return await _db.Set<TEntity>().AnyAsync(e => e.Id == id, ct);
+        }
+
         public async Task<TEntity?> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
             var entity = await _db.Set<TEntity>().FindAsync(new object[] { id }, cancellationToken);
