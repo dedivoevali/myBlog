@@ -30,6 +30,13 @@ namespace DAL.DataSeed
                 dbContext.Add(_vaflea);
                 dbContext.Add(_admin);
 
+                var mockAccounts = Enumerable.Range(0, 100000).Select(_ => new User
+                {
+                    Username = Guid.NewGuid().ToString().Replace("-", "")[..20],
+                    PasswordHash = "65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5" // qwerty
+                });
+                dbContext.AddRange(mockAccounts);
+
                 await dbContext.SaveChangesAsync();
             }
         }
