@@ -1,10 +1,11 @@
 import { AxiosInstance } from "axios"
 import { instance } from "./api";
-import { PasskeyRegistrationOptions } from "../types/authentication/passkey/passkey-registration-options";
 import { AuthenticateResponse } from "../types";
-import { PasskeyAuthenticationOptions } from "../types/authentication/passkey/passkey-authentication-options";
-import { IPasskeyRegistrationRequest } from "../types/authentication/passkey/passkey-registration-request";
-import { PasskeyAuthenticationRequest } from "../types/authentication/passkey/passkey-authentication-request";
+import {
+    IPasskeyRegistrationRequest,
+    PasskeyAuthenticationOptions,
+    PasskeyAuthenticationRequest,
+    PasskeyRegistrationOptions } from "../types/authentication/passkey";
 
 export class PasskeyApi {
 

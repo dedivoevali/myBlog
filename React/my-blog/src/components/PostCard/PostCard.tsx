@@ -35,6 +35,9 @@ import {ConfirmActionCustomModal} from "../CustomModal";
 import {UserInfoCache} from "../../shared/types";
 import {useNotifier} from '../../hooks';
 import { FlagEmoji } from '../FlagEmoji/FlagEmoji';
+import PostStatisticsTable from '../PostStatisticsTable/PostStatisticsTable';
+import { TimeMeasure } from '../../shared/api/types/stats';
+import dayjs from 'dayjs';
 
 const PostCard = ({
                       initialPost,
@@ -49,6 +52,7 @@ const PostCard = ({
     const [editPostMode, setEditPostMode] = useState<boolean>(false);
     const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState<boolean>(false);
     const navigate = useNavigate();
+    const now = dayjs();
 
     const commentsPagingRequestDefault: CursorPagedRequest = {
         pageSize: commentPortionSize,
