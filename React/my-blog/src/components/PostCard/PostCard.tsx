@@ -25,7 +25,7 @@ import {CursorPagedRequest} from "../../shared/api/types/paging/cursorPaging";
 import {ExpandMoreCard} from './ExpandMoreCard';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {PostReactionBox} from "../PostReactionBox";
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {PostForm} from '../PostForm';
 import {AxiosResponse} from 'axios';
 import {PostDto, PostModel} from '../../shared/api/types/post';
@@ -41,12 +41,14 @@ const PostCard = ({
                       width = "100%",
                       commentPortionSize = DefaultPageSize,
                       disappearPostCallback,
-                      enableCommentInfiniteScroll = false
+                      enableCommentInfiniteScroll = false,
+                      redirectToAfterDelete = undefined
                   }: PostCardProps) => {
 
     const [post, setPost] = useState<PostModel>(initialPost);
     const [editPostMode, setEditPostMode] = useState<boolean>(false);
     const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState<boolean>(false);
+    const navigate = useNavigate();
 
     const commentsPagingRequestDefault: CursorPagedRequest = {
         pageSize: commentPortionSize,
@@ -97,13 +99,15 @@ const PostCard = ({
             if (result.status === 200 && user) {
                 disappearPostCallback();
                 notifyUser("Post was successfully deleted", "success");
+                if (redirectToAfterDelete) {
+                    navigate(redirectToAfterDelete);
+                }
             } else {
                 notifyUser("Error occurred", "error");
             }
 
         })
     }
-
 
     useEffect(() => {
         fetchAvatarUrl(post.authorId);

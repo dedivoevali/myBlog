@@ -6,4 +6,5 @@ export interface PostCardProps {
     width: string,
     commentPortionSize: number,
     enableCommentInfiniteScroll?: boolean
+    redirectToAfterDelete?: string
 }

@@ -54,7 +54,8 @@ const PostPage = () => {
                             :
                             post && <PostCard enableCommentInfiniteScroll initialPost={post} width={"70%"}
                                               commentPortionSize={DefaultPageSize}
-                                              disappearPostCallback={handleDeletePostAndRedirectToHomePage}/>
+                                              disappearPostCallback={handleDeletePostAndRedirectToHomePage}
+                                              redirectToAfterDelete='/'/>
                     )
             }
         </>
