@@ -16,7 +16,13 @@ public class ContentStatisticsService : IContentStatisticsService
     }
     public async Task<PostActivityModel> GetForPost(GetStatsForPostDto dto, TimeMeasure measure, CancellationToken ct = default)
     {
+        if (dto.StartDate > dto.EndDate)
+        {
+            throw new ValidationException($"StartDate is greater than EndDate");
+        }
+
         var postExists = await _postRepository.ExistsAsync(dto.PostId, ct);
+
         if (!postExists)
         {
             throw new NotFoundException($"Post with ID {dto.PostId} was not found");

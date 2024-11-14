@@ -140,4 +140,24 @@ public class ContentStatisticsServiceTests
             .WithMessage($"Post with ID {dto.PostId} was not found");
     }
 
+    [Fact]
+    public async Task GetForPost_ShouldThrowValidationException_WhenStartDateGreaterThanEndDate()
+    {
+        // Arrange
+        var dto = new GetStatsForPostDto
+        {
+            PostId = 200,
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now
+        };
+
+        _postRepository.ExistsAsync(dto.PostId, Arg.Any<CancellationToken>()).Returns(true);
+
+        // Act
+        var act = async () => await _service.GetForPost(dto, TimeMeasure.Day);
+
+        // Assert
+        await act.Should().ThrowAsync<ValidationException>();
+    }
+
 }
