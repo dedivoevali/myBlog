@@ -1,8 +1,6 @@
 name: Backend Build + Unit Test
 
 on:
-  push:
-    branches: [ "slave" ]
   pull_request:
     branches: [ "slave" ]
 
