@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {CommentCardProps} from "./CommentCardProps";
-import {getFirstCharOfStringUpperCase, transformUtcStringToDateMonthHoursMinutesString} from "../../shared/assets";
+import {transformUtcStringToDateMonthHoursMinutesString} from "../../shared/assets";
 import {Avatar, Box, Card, CardContent, CardHeader, IconButton, Menu, MenuItem, Typography} from '@mui/material';
 import {commentApi, userApi} from "../../shared/api/http/api";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -90,7 +90,7 @@ const CommentCard = ({width = "100%", initialComment, disappearCommentCallback, 
 
                             <CardHeader
                                 avatar={<Avatar
-                                    src={avatarLink}>{getFirstCharOfStringUpperCase(comment.authorUsername)}</Avatar>}
+                                    src={avatarLink}>{comment.authorInitials}</Avatar>}
                                 title={
                                     <Typography style={{display: "inline"}}>
                                         <UserMentioningInline userId={comment.authorId}

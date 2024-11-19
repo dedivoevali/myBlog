@@ -17,7 +17,6 @@ import {useFormik} from "formik";
 import {UserInfoDto, UserModel} from "../../../shared/api/types/user";
 import {
     FirstnameLastnameConstraints,
-    getFirstCharOfStringUpperCase,
     palette,
     UsernameValidationConstraints
 } from "../../../shared/assets";
@@ -206,7 +205,7 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
                         <Avatar
                             sx={{minHeight: "128px", minWidth: "128px", width: "2vw", height: "2vw", fontSize: "64px"}}
                             style={{margin: "0 auto"}}
-                            src={avatarPreview?.toString()}>{getFirstCharOfStringUpperCase(user.username)}</Avatar>
+                            src={avatarPreview?.toString()}>{user.initials}</Avatar>
 
                         <input name={"avatar"} accept={"image/png,image/jpeg"} id={"contained-button-file"}
                                type={"file"} onChange={handleFile}/>

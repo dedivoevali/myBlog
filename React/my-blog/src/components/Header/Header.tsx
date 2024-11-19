@@ -6,7 +6,6 @@ import {CustomNavbar} from '../CustomNavbar';
 import {CustomNavLink} from '../CustomNavLink';
 import {Link} from 'react-router-dom';
 import {AccountMenuDropdown} from '../AccountMenuDropdown';
-import {getFirstCharOfStringUpperCase} from '../../shared/assets';
 import {UserInfoCache} from "../../shared/types";
 
 
@@ -35,7 +34,7 @@ const Header = () => {
                         <div>
                             <Typography display={"inline"}>Welcome, {user?.username}!</Typography>
                             <AccountMenuDropdown icon={<Avatar
-                                src={user?.avatar}>{getFirstCharOfStringUpperCase(user?.username)}</Avatar>}></AccountMenuDropdown>
+                                src={user?.avatar}>{user?.username[0]}</Avatar>}></AccountMenuDropdown>
                         </div>
                         :
                         <Button variant="contained" component={Link} to="/login">Login</Button>
