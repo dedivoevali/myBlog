@@ -10,7 +10,6 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import styles from './PostPage.module.scss';
 
 const PostPage = () => {
-
     const {postId} = useParams();
     const [post, setPost] = useState<PostModel>();
     const [hasError, setError] = useState<boolean>(false);

@@ -38,6 +38,8 @@ import { FlagEmoji } from '../FlagEmoji/FlagEmoji';
 import PostStatisticsTable from '../PostStatisticsTable/PostStatisticsTable';
 import { TimeMeasure } from '../../shared/api/types/stats';
 import dayjs from 'dayjs';
+import { Analytics } from '@mui/icons-material';
+import { PostCardStatisticsDialog } from './PostCardStatisticsDialog';
 
 const PostCard = ({
                       initialPost,
@@ -52,7 +54,6 @@ const PostCard = ({
     const [editPostMode, setEditPostMode] = useState<boolean>(false);
     const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState<boolean>(false);
     const navigate = useNavigate();
-    const now = dayjs();
 
     const commentsPagingRequestDefault: CursorPagedRequest = {
         pageSize: commentPortionSize,
@@ -70,6 +71,7 @@ const PostCard = ({
 
     const user = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
 
+    const [statsDialogOpen, setStatsDialogOpen] = useState(false);
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -162,6 +164,10 @@ const PostCard = ({
                                             at {assets.transformUtcStringToDateMonthHoursMinutesString(post.registrationDate)}
                                         </Link>
                                         <FlagEmoji fontSizePx={16} emoji={assets.getFlagEmoji(post.language)}/>
+                                        <IconButton onClick={() => setStatsDialogOpen(true)}>
+                                            <Analytics/>
+                                        </IconButton>
+                                        <PostCardStatisticsDialog open={statsDialogOpen} post={post} close={() => setStatsDialogOpen(false)}/>
                                     </Box>}/>
                             <CardContent>
                                 <>
@@ -175,7 +181,6 @@ const PostCard = ({
                                     <Typography>{post.content}</Typography>
                                 </>
                             </CardContent>
-
 
                             <CardActions>
 
