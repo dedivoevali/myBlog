@@ -38,7 +38,7 @@ public class ContentStatisticsService : IContentStatisticsService
 
         for (var date = dto.StartDate; date <= dto.EndDate; date = measure switch { TimeMeasure.Day => date.AddDays(1), TimeMeasure.Month => date.AddMonths(1) })
         {
-            dates.Add(date);
+            dates.Add(date.Date);
         }
 
         var result = await _postRepository.GetPostActivity(dto.PostId, dates, measure, ct);
