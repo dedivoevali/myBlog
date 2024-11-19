@@ -35,11 +35,9 @@ import {ConfirmActionCustomModal} from "../CustomModal";
 import {UserInfoCache} from "../../shared/types";
 import {useNotifier} from '../../hooks';
 import { FlagEmoji } from '../FlagEmoji/FlagEmoji';
-import PostStatisticsTable from '../PostStatisticsTable/PostStatisticsTable';
-import { TimeMeasure } from '../../shared/api/types/stats';
-import dayjs from 'dayjs';
 import { Analytics } from '@mui/icons-material';
 import { PostCardStatisticsDialog } from './PostCardStatisticsDialog';
+import styles from "./post-card.module.scss";
 
 const PostCard = ({
                       initialPost,
@@ -164,7 +162,7 @@ const PostCard = ({
                                             at {assets.transformUtcStringToDateMonthHoursMinutesString(post.registrationDate)}
                                         </Link>
                                         <FlagEmoji fontSizePx={16} emoji={assets.getFlagEmoji(post.language)}/>
-                                        <IconButton onClick={() => setStatsDialogOpen(true)}>
+                                        <IconButton className={styles['stats-icon']} onClick={() => setStatsDialogOpen(true)}>
                                             <Analytics/>
                                         </IconButton>
                                         <PostCardStatisticsDialog open={statsDialogOpen} post={post} close={() => setStatsDialogOpen(false)}/>
