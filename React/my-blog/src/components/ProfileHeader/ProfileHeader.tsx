@@ -28,7 +28,6 @@ const ProfileHeader = ({user, setUser}: ProfileHeaderProps) => {
 
     };
 
-
     const [editProfileModalOpen, setEditProfileModalOpen] = useState<boolean>(false);
 
     const [avatarLink, setAvatarLink] = useState<string>("");

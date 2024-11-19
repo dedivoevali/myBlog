@@ -35,6 +35,9 @@ import {ConfirmActionCustomModal} from "../CustomModal";
 import {UserInfoCache} from "../../shared/types";
 import {useNotifier} from '../../hooks';
 import { FlagEmoji } from '../FlagEmoji/FlagEmoji';
+import { Analytics } from '@mui/icons-material';
+import { PostCardStatisticsDialog } from './PostCardStatisticsDialog';
+import styles from "./post-card.module.scss";
 
 const PostCard = ({
                       initialPost,
@@ -66,6 +69,7 @@ const PostCard = ({
 
     const user = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
 
+    const [statsDialogOpen, setStatsDialogOpen] = useState(false);
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -158,6 +162,10 @@ const PostCard = ({
                                             at {assets.transformUtcStringToDateMonthHoursMinutesString(post.registrationDate)}
                                         </Link>
                                         <FlagEmoji fontSizePx={16} emoji={assets.getFlagEmoji(post.language)}/>
+                                        <IconButton className={styles['stats-icon']} onClick={() => setStatsDialogOpen(true)}>
+                                            <Analytics/>
+                                        </IconButton>
+                                        <PostCardStatisticsDialog open={statsDialogOpen} post={post} close={() => setStatsDialogOpen(false)}/>
                                     </Box>}/>
                             <CardContent>
                                 <>
@@ -171,7 +179,6 @@ const PostCard = ({
                                     <Typography>{post.content}</Typography>
                                 </>
                             </CardContent>
-
 
                             <CardActions>
 

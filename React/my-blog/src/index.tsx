@@ -8,6 +8,8 @@ import {ApplicationState, CustomNotificationPayload, ReduxActionTypes} from './r
 import {AvatarTokenKeyName, JwtTokenKeyName, UserIdTokenKeyName, UsernameTokenKeyName, applicationTheme} from './shared/config';
 import {UserInfoCache} from "./shared/types";
 import { ThemeProvider } from '@emotion/react';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -92,9 +94,11 @@ const store = createStore(reducer);
 root.render(
     <Provider store={store}>
         <ThemeProvider theme={applicationTheme}>
-            <BrowserRouter>
-                <App/>
-            </BrowserRouter>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <BrowserRouter>
+                    <App/>
+                </BrowserRouter>
+            </LocalizationProvider>
         </ThemeProvider>
     </Provider>
 );
