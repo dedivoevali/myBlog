@@ -5,5 +5,6 @@ export interface CommentModel {
     postTitle: string,
     authorId: number,
     authorUsername: string,
+    authorInitials: string,
     content: string
 }

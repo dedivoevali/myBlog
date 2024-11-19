@@ -8,8 +8,6 @@ export * from "./palette";
 
 export * from "./validationConstraints"
 
-export * from "./getFirstCharOfStringUpperCase"
-
 export * from "./transformUtcToLocalDate"
 
 export * from "./transformUtcToLocalDateMonthHoursMinutesString"

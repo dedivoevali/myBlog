@@ -142,9 +142,7 @@ const PostCard = ({
                                 </Menu>
                             }
                             <CardHeader
-                                avatar={<Avatar src={avatarLink}>
-                                    {assets.getFirstCharOfStringUpperCase(post.authorUsername)}
-                                </Avatar>}
+                                avatar={<Avatar src={avatarLink}>{post.authorInitials}</Avatar>}
                                 action={user && user?.id === post.authorId ?
                                     <IconButton onClick={handleOpenMenu}><MoreVertIcon/></IconButton> : <></>}
                                 title={<Link to={`/user/${post.authorId}`}>{post.authorUsername}</Link>}

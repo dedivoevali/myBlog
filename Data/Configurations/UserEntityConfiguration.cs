@@ -12,6 +12,16 @@ namespace DAL.Configurations
         {
             builder.ToTable(nameof(User));
 
+            builder.Property(e => e.Initials)
+                .HasMaxLength(2)
+                .IsRequired()
+                .HasComputedColumnSql("""
+                                      CASE 
+                                          WHEN [FirstName] IS NOT NULL AND [LastName] IS NOT NULL 
+                                              THEN SUBSTRING([FirstName], 1, 1) + SUBSTRING([LastName], 1, 1)
+                                          ELSE SUBSTRING([Username], 1, 1)
+                                      END
+                                      """, false);
 
             builder.Property(e => e.Username)
                 .IsRequired()

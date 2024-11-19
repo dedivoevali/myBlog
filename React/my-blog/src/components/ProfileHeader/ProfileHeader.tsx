@@ -7,7 +7,6 @@ import {ProfileHeaderProps} from './ProfileHeaderProps';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import {
-    getFirstCharOfStringUpperCase,
     transformUtcStringToDateMonthHoursMinutesString,
     transformUtcToLocalDate
 } from '../../shared/assets';
@@ -58,7 +57,7 @@ const ProfileHeader = ({user, setUser}: ProfileHeaderProps) => {
                     alignItems: "center"
                 }}>
                     <div>
-                        <Avatar className={styles.avatar} src={avatarLink}>{getFirstCharOfStringUpperCase(user.username)}</Avatar>
+                        <Avatar className={styles.avatar} src={avatarLink}>{user.initials}</Avatar>
                     </div>
 
                     <div>

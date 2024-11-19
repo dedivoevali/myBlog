@@ -9,6 +9,7 @@ namespace Common.Models
         public string FullName { get; set; }
 
         public string LastActivity { get; set; }
+        public string Initials { get; set; }
         public bool IsBanned { get; set; }
         public ICollection<UserWarningModel> ActiveWarnings { get; set; }
     }
