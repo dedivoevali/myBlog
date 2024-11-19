@@ -1,0 +1,20 @@
+.loading-wrapper {
+    margin: 15% 0 0 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.error-wrapper {
+    margin: 15% auto;
+
+    &__caption {
+        text-align: center;
+    }
+
+    &__icon {
+        margin: 0 auto !important;
+        display: block !important;
+        width: 100px !important;
+        height: 100px !important;
+    }
+}

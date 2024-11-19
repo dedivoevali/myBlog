@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Navigate, useParams} from 'react-router-dom';
+import { useNavigate, useParams}  from 'react-router-dom';
 import {PostCard} from '../../components/PostCard';
 import {DefaultPageSize} from '../../shared/config';
 import {postApi} from "../../shared/api/http/api";
@@ -7,6 +7,7 @@ import {PostModel} from '../../shared/api/types/post';
 import {AxiosResponse} from "axios";
 import {Box, CircularProgress, Typography} from "@mui/material";
 import CancelIcon from '@mui/icons-material/Cancel';
+import styles from './PostPage.module.scss';
 
 const PostPage = () => {
 
@@ -14,8 +15,9 @@ const PostPage = () => {
     const [post, setPost] = useState<PostModel>();
     const [hasError, setError] = useState<boolean>(false);
     const [isLoading, setLoading] = useState<boolean>();
+    const navigate = useNavigate();
 
-    const handleDeletePostAndRedirectToHomePage = () => <Navigate to={`/`}/>
+    const redirectToMain = () => navigate(`/`);
 
     useEffect(() => {
         setLoading(true);
@@ -37,24 +39,22 @@ const PostPage = () => {
             {
                 isLoading
                     ?
-                    <Box style={{margin: "15% 0 0 0", display: "flex", justifyContent: "space-around"}}>
+                    <Box className={styles['loading-wrapper']}>
                         <CircularProgress size={100}/>
                     </Box>
                     :
                     (hasError
-                            ? <Box style={{margin: "15% auto"}}>
-                                <Typography variant={"h2"} style={{textAlign: "center"}}>
+                            ? <Box className={styles['error-wrapper']}>
+                                <Typography variant={"h2"} className={styles['error-wrapper__caption']}>
                                     No post of id {postId} was found on the server
                                 </Typography>
 
-                                <CancelIcon
-                                    style={{margin: "0 auto", display: "block", width: "100px", height: "100px"}}/>
+                                <CancelIcon className={styles['error-wrapper__icon']}/>
                             </Box>
-
                             :
                             post && <PostCard enableCommentInfiniteScroll initialPost={post} width={"70%"}
                                               commentPortionSize={DefaultPageSize}
-                                              disappearPostCallback={handleDeletePostAndRedirectToHomePage}
+                                              disappearPostCallback={redirectToMain}
                                               redirectToAfterDelete='/'/>
                     )
             }
