@@ -7,6 +7,7 @@ using Domain.Abstract;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement;
 
 namespace API
 {
@@ -74,6 +75,7 @@ namespace API
             services.AddScoped<BannedUserMiddleware>();
             services.AddProblemDetails();
             services.AddExceptionHandler<GlobalExceptionHandlingMiddleware>();
+            services.AddFeatureManagement();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

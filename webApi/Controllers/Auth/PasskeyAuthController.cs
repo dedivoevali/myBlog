@@ -2,10 +2,12 @@
 using Common.Dto.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement.Mvc;
 using Service.Abstract.Auth.Passkeys;
 
 namespace API.Controllers.Auth;
 
+[FeatureGate("Passkey")]
 [Route("api/passkey")]
 public class PasskeyAuthController(IPasskeyAuthService passkeyAuthService) : AppBaseController
 {
