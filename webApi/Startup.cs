@@ -43,13 +43,9 @@ namespace API
                 return new UnitOfWork(context);
             });
 
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = Configuration.GetConnectionString("Redis");
-            });
-
             services.AddMassTransit(busConfigurator =>
             {
+
                 busConfigurator.AddDelayedMessageScheduler();
                 busConfigurator.SetKebabCaseEndpointNameFormatter();
                 busConfigurator.AddConsumersFromNamespaceContaining(typeof(API.AssemblyReference));
@@ -70,6 +66,7 @@ namespace API
 
             services.AddAutoMapper(typeof(MappingAssemblyMarker).Assembly);
             services.InitializeOptions(Configuration);
+            services.AddCache(Configuration);
             services.InitializeRepositories();
             services.InitializeServices();
             services.InitializeControllers();
