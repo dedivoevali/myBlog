@@ -10,6 +10,7 @@ import '../RegisterPasskeyButton/RegisterPasskeyButton.scss';
 import { IPasskeyRegistrationRequest } from "../../shared/api/types/authentication/passkey/passkey-registration-request";
 import { arrayBufferToBase64 } from "../../shared/assets/array-buffer-utils";
 import { useNotifier } from "../../hooks";
+import { useState } from "react";
 
 const RegisterPasskeyButton = ({ caption }: RegisterPasskeyButtonProps) => {
 
@@ -17,9 +18,10 @@ const RegisterPasskeyButton = ({ caption }: RegisterPasskeyButtonProps) => {
     const webauthnService = new WebauthnService(navigator, window);
     const user = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
     const notifyUser = useNotifier();
+    const [loading, setLoading] = useState(false);
     const onClick = () => {
+        setLoading(true);
         passkeyApi.getRegistrationOptions().then(result => {
-
             webauthnService.generateCredential(result).then((credential: any) => {
                 const request: IPasskeyRegistrationRequest = {
                     id: credential.id,
@@ -29,10 +31,14 @@ const RegisterPasskeyButton = ({ caption }: RegisterPasskeyButtonProps) => {
                     type: credential.type  
                 };
                 passkeyApi.register(request)
-                .then(() => notifyUser("Passkey created successfully!", "success"))
+                .then(() => {
+                    notifyUser("Passkey created successfully!", "success");
+                })
                 .catch((result) => notifyUser(result.response?.data.Message, "error"));
             }).catch((err) => {
-                notifyUser("error", "info");
+                notifyUser("Passkey authentication aborted", "info");
+            }).finally(() => {
+                setLoading(false);
             })
         })
     };
@@ -40,11 +46,11 @@ const RegisterPasskeyButton = ({ caption }: RegisterPasskeyButtonProps) => {
     return (
         <div className="passkey-button-wrapper">
             {
-                user ? <Button variant="contained" onClick={onClick}>{
+                user ? <Button variant="contained" disabled={loading} onClick={onClick}>{
                     <div className="passkey-button-content">
                         <VpnKeySharp />
                         <span>{caption}</span>
-                    </div>
+                    </div> 
                 }</Button> : <></>}
         </div>
     )
