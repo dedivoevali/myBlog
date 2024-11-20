@@ -15,9 +15,6 @@ namespace API.Extensions
             services.Configure<PasskeyOptions>(
                 configuration.GetSection(PasskeyOptions.Config));
 
-            services.Configure<CacheOptions>(
-                configuration.GetSection(CacheOptions.Config));
-
             services.Configure<SemanticAnalysisOptions>(
                 configuration.GetSection(SemanticAnalysisOptions.Config));
 

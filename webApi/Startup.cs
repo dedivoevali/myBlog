@@ -7,6 +7,7 @@ using Domain.Abstract;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement;
 
 namespace API
 {
@@ -43,13 +44,9 @@ namespace API
                 return new UnitOfWork(context);
             });
 
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = Configuration.GetConnectionString("Redis");
-            });
-
             services.AddMassTransit(busConfigurator =>
             {
+
                 busConfigurator.AddDelayedMessageScheduler();
                 busConfigurator.SetKebabCaseEndpointNameFormatter();
                 busConfigurator.AddConsumersFromNamespaceContaining(typeof(API.AssemblyReference));
@@ -70,6 +67,7 @@ namespace API
 
             services.AddAutoMapper(typeof(MappingAssemblyMarker).Assembly);
             services.InitializeOptions(Configuration);
+            services.AddCache(Configuration);
             services.InitializeRepositories();
             services.InitializeServices();
             services.InitializeControllers();
@@ -77,6 +75,7 @@ namespace API
             services.AddScoped<BannedUserMiddleware>();
             services.AddProblemDetails();
             services.AddExceptionHandler<GlobalExceptionHandlingMiddleware>();
+            services.AddFeatureManagement();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

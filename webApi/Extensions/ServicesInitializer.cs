@@ -28,7 +28,6 @@ namespace API.Extensions
             services.AddScoped<IFilePerUserHandlingService, AvatarService>();
             services.AddScoped<IPostReactionService, PostReactionService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ICacheService, RedisDistributedCacheService>();
             services.AddScoped<IUserPunishmentsService, UserPunishmentsService>();
             services.AddScoped<IContentStatisticsService, ContentStatisticsService>();
             
