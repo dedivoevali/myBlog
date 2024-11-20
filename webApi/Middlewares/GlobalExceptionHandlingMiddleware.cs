@@ -38,7 +38,7 @@ public class GlobalExceptionHandlingMiddleware(
         context.Response.ContentType = "application/json";
 
         return context.Response.WriteAsync(
-            new ErrorDetails(context.Response.StatusCode, e.Message).ToString()
+            new ErrorDetails(context.Response.StatusCode, e.Message, e.StackTrace ?? "").ToString()
         );
     }
 }
