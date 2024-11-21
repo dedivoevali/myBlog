@@ -10,9 +10,7 @@ namespace API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.ConfigureLogging(e => e.ClearProviders());
-                })
-                .UseNLog();
+                });
         }
     }
 }

@@ -11,8 +11,6 @@ public class GlobalExceptionHandlingMiddleware(
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        logger.LogCritical(exception, exception.Message);
-
         httpContext.Response.StatusCode = exception switch
         {
             NotFoundException => (int)HttpStatusCode.NotFound,
@@ -22,6 +20,12 @@ public class GlobalExceptionHandlingMiddleware(
             TaskCanceledException or OperationCanceledException => default,
             _ => (int)HttpStatusCode.InternalServerError
         };
+
+        if (httpContext.Response.StatusCode == (int)HttpStatusCode.InternalServerError)
+        {
+            logger.LogCritical(exception, exception.Message);
+        }
+
 
         if (exception is TaskCanceledException or OperationCanceledException)
         {
