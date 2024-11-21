@@ -1,6 +1,4 @@
-﻿using NLog.Web;
-
-namespace API
+﻿namespace API
 {
     public static class WebHostFactory
     {

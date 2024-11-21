@@ -3,7 +3,6 @@ using Common.Dto.Auth;
 using Common.Exceptions;
 using Common.Models.Passkey;
 using DAL.Repositories.Abstract;
-using Microsoft.IdentityModel.Tokens;
 using Service.Abstract.Auth;
 using Service.Abstract.Auth.Passkeys;
 
@@ -80,7 +79,7 @@ public class PasskeyAuthService(
             throw new ValidationException($"User is banned! Please contact administrator!");
         }
 
-        if (user.Passkeys?.IsNullOrEmpty() ?? true)
+        if (!user.Passkeys.Any())
         {
             throw new NotFoundException("No passkeys available!");
         }
