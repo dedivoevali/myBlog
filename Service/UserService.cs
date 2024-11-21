@@ -3,7 +3,6 @@ using DAL.Repositories.Abstract;
 using Domain;
 using Service.Abstract;
 using System.Linq.Expressions;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Service
 {
@@ -49,7 +48,7 @@ namespace Service
             var user = await _userRepository.GetByIdAsync(request.Id, cancellationToken) ??
                        throw new ValidationException($"User with ID {request.Id} was not found");
 
-            if (!request.Username.IsNullOrEmpty())
+            if (!string.IsNullOrEmpty(request.Username))
             {
                 var newUsernameDuplicates =
                     await _userRepository.GetWhereAsync(user => user.Username == request.Username, cancellationToken);
