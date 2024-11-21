@@ -9,7 +9,7 @@ public class PasskeyOptions : BaseApplicationOptions
     public TimeSpan ChallengeLifetime => TimeSpan.FromMinutes(ChallengeLifetimeMinutes);
 }
 
-public record PasskeyRelyingParty
+public class PasskeyRelyingParty
 {
     public string DomainName { get; init; }
     public string DisplayName { get; init; }
