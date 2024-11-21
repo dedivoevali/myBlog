@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { PasskeyListModel } from "../../shared/api/types/authentication/passkey/passkey-info-model";
 import { CenteredLoader } from "../CenteredLoader";
-import { VpnKey, VpnKeyOff } from "@mui/icons-material";
+import { VpnKey } from "@mui/icons-material";
 import { userApi } from "../../shared/api/http/api";
-import "../PasskeyList/PasskeyList.scss";
-import moment from "moment";
+import styles from "./passkey-list.module.scss";
 import { dateTimeFormats } from "../../shared/assets/dateTimeUtils";
+import dayjs from "dayjs";
 
 const PasskeyList = () => {
     const [isLoading, setLoading] = useState<boolean>(true);
@@ -19,18 +19,19 @@ const PasskeyList = () => {
     }, []);
 
     return (
-        isLoading ? <CenteredLoader/> : <div>
+        isLoading ? <CenteredLoader /> : <div>
             {
-                passkeys?.passkeys.map(p => <div
-                        key={`passkey-info-${p.id}`}
-                        id={`passkey-info-${p.id}`}
-                        className={`passkey-info__item`}>
-                    <VpnKey/>
-                    <span className={`passkey-info__caption`}>{p.name + ' ' + moment(p.registrationDate).format(dateTimeFormats.SIMPLE_WITH_TIME)}</span>
+                passkeys?.passkeys.map(p => 
+                <div
+                    key={`passkey-info-${p.id}`}
+                    id={`passkey-info-${p.id}`}
+                    className={styles[`passkey-info__item`]}>
+                    <VpnKey />
+                    <span className={styles[`passkey-info__caption`]}>{p.name + ' ' + dayjs(p.registrationDate).format(dateTimeFormats.SIMPLE_WITH_TIME)}</span>
                 </div>)
             }
         </div>
     )
 }
 
-export {PasskeyList};
+export { PasskeyList };

@@ -32,25 +32,10 @@ import {ApplicationState, ReduxActionTypes} from '../../../redux';
 import {useDispatch, useSelector} from 'react-redux';
 import {UserInfoCache} from '../../../shared/types';
 import {MaxAvatarSizeBytes} from "../../../shared/config";
-import '../EditProfileCustomModal/EditProfileCustomModal.scss';
+import styles from  './edit-profile-custom-modal.module.scss';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { RegisterPasskeyButton } from '../../RegisterPasskeyButton';
 import { PasskeyList } from '../../PasskeyList/PasskeyList';
-
-
-const textFieldStyle: React.CSSProperties = {
-    maxWidth: "400px",
-    width: "20vw",
-    minWidth: "300px",
-    margin: "0 auto",
-    padding: "0 0 20px 0"
-};
-
-const errorTextStyle: React.CSSProperties = {
-    color: "red",
-    fontStyle: "italic"
-}
-
 
 const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditProfileCustomModalProps) => {
 
@@ -101,7 +86,6 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
 
                 setReduxUserInfo({...response.data});
 
-
                 notifyUser("User information was successfully updated", "success")
                 setModalOpen(false);
                 formikHelpers.resetForm();
@@ -133,7 +117,7 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
 
     const [avatarPreview, setAvatarPreview] = useState<string>("");
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
-
+    const [passkeyListUpdateTrigger, setPasskeyListUpdateTrigger] = useState<number>(0);
 
     const handleFile = (e: ChangeEvent<HTMLInputElement>) => {
 
@@ -193,14 +177,12 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
 
     return (
         <CustomModal modalOpen={modalOpen} setModalOpen={setModalOpen}>
-            <form style={{margin: "0 auto", display: "flex", flexDirection: "column", justifyContent: "space-between"}}
+            <form className={styles["edit-profile-form"]}
                   onSubmit={formik.handleSubmit}>
 
                 <DialogContent>
 
-                    <Box style={{minHeight: "100px"}} display={"flex"} textAlign={"center"}
-                         justifyContent={"space-around"}
-                         flexDirection={"column"}>
+                    <Box className={styles["avatar-section"]}>
 
                         <Avatar
                             sx={{minHeight: "128px", minWidth: "128px", width: "2vw", height: "2vw", fontSize: "64px"}}
@@ -219,43 +201,44 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
 
                     </Box>
 
-                    <Box className="profile-info-container">
+                    <Box className={styles["profile-section__wrapper"]}>
 
-                        <FormHeader iconColor={palette.BAYERN_BLUE} caption={"Edit profile information"}
-                                    icon={<AccountBoxIcon/>}/>
+                        <FormHeader className={styles["profile-section__header"]}
+                            iconColor={palette.BAYERN_BLUE} caption={"Edit profile information"}
+                            icon={<AccountBoxIcon/>}/>
 
-                        <FormControl style={textFieldStyle}>
+                        <FormControl className={styles["form-field"]}>
                             <InputLabel htmlFor="username">Username</InputLabel>
                             <Input onChange={formik.handleChange} value={formik.values.username} name="username"/>
                             <FormHelperText>
                                 {formik.touched.username && formik.errors.username && (
-                                    <span style={errorTextStyle}>{formik.errors.username}</span>)}
+                                    <span className={styles.error}>{formik.errors.username}</span>)}
                             </FormHelperText>
                         </FormControl>
 
-                        <FormControl style={textFieldStyle}>
+                        <FormControl className={styles["form-field"]}>
                             <InputLabel htmlFor="firstName">First name</InputLabel>
                             <Input onChange={formik.handleChange} value={formik.values.firstName} name="firstName"/>
                             <FormHelperText>
                                 {formik.touched.firstName && formik.errors.firstName && (
-                                    <span style={errorTextStyle}>{formik.errors.firstName}</span>)}
+                                    <span className={styles.error}>{formik.errors.firstName}</span>)}
                             </FormHelperText>
                         </FormControl>
 
-                        <FormControl style={textFieldStyle}>
+                        <FormControl className={styles["form-field"]}>
                             <InputLabel htmlFor="lastName">Last name</InputLabel>
                             <Input onChange={formik.handleChange} value={formik.values.lastName} name="lastName"/>
                             <FormHelperText>
                                 {formik.touched.lastName && formik.errors.lastName && (
-                                    <span style={errorTextStyle}>{formik.errors.lastName}</span>)}
+                                    <span className={styles.error}>{formik.errors.lastName}</span>)}
                             </FormHelperText>
                         </FormControl>
                     </Box>
 
-                    <Box className="security">
+                    <Box className={styles["security"]}>
                         <FormHeader iconColor={palette.SUNRISE} caption="Security" icon={<VpnKeyIcon/>}/>
-                        <PasskeyList/>
-                        <RegisterPasskeyButton caption="ADD PASSKEY"/>
+                        <PasskeyList key={passkeyListUpdateTrigger}/>
+                        <RegisterPasskeyButton caption="ADD PASSKEY" onSuccess={() => setPasskeyListUpdateTrigger(passkeyListUpdateTrigger + 1)}/>
                     </Box>
                 </DialogContent>
 
