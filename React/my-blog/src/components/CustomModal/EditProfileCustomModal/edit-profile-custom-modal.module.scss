@@ -1,0 +1,49 @@
+.security {
+    justify-content: space-around;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    align-items: center;
+    gap: 10px;
+}
+
+.edit-profile-form {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.form-field {
+    max-width: 400px;
+    width: 20vw !important;
+    min-width: 300px;
+    padding: 0 0 16px 0 !important;
+}
+
+.error {
+    color: red;
+    font-style: italic
+}
+
+.avatar-section {
+    min-height: 100px;
+    gap: 10px;
+    display: flex;
+    text-align: center;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+.profile-section {
+    &__header {
+        padding-bottom: 8px;
+    }
+
+    &__wrapper {
+        justify-content: space-around;
+        display: flex;
+        flex-direction: column;
+        margin: 10px 0;   
+    }
+}

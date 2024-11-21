@@ -102,6 +102,10 @@ const LoginForm = () => {
                 })
                 .catch((err) => displayNotification(err.response.data.Message, "error"));
             });
+        }).catch(err => {
+            if (err.status !== 404) { // Not found is thrown when passkey feature is disabled
+                throw err;
+            }
         });
     }, []);
 
