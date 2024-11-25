@@ -55,7 +55,9 @@ export class avatarApi {
 
 export class userApi {
     static getAvatarUrlById(userId: number) {
-        return instance.get(`/avatars/${userId}`);
+        return instance.get(`/avatars/${userId}`, {
+            validateStatus: (status) => [HttpStatusCode.Ok, HttpStatusCode.NotFound].includes(status)
+        });
     }
 
     static getUserById(userId: number) {

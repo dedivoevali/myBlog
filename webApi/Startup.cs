@@ -4,10 +4,14 @@ using API.Middlewares;
 using Common;
 using DAL;
 using Domain.Abstract;
+using HealthChecks.UI.Client;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
+using Service;
+using Service.Abstract;
 
 namespace API
 {
@@ -44,6 +48,8 @@ namespace API
                 return new UnitOfWork(context);
             });
 
+            services.AddScoped(typeof(IBlobStorageService<>), typeof(AzureBlobStorageService<>));
+
             services.AddMassTransit(busConfigurator =>
             {
 
@@ -76,6 +82,7 @@ namespace API
             services.AddProblemDetails();
             services.AddExceptionHandler<GlobalExceptionHandlingMiddleware>();
             services.AddFeatureManagement();
+            services.AddMyHealthChecks(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -111,6 +118,11 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("pulse", new HealthCheckOptions
+                {
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+                    AllowCachingResponses = false
+                });
             });
         }
     }

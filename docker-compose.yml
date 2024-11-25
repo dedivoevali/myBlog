@@ -17,8 +17,10 @@ services:
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+
   rabbitmq:
     container_name: blog-mq
+    restart: always
     hostname: blog-mq
     image: masstransit/rabbitmq
     ports:
@@ -30,3 +32,11 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
+  azurite:
+    restart: always
+    container_name: azure-storage
+    image: "mcr.microsoft.com/azure-storage/azurite:latest"
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"

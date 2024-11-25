@@ -2,158 +2,101 @@
 using Common.Extensions;
 using DAL.Repositories.Abstract;
 using Domain;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Service.Abstract;
-using System.Drawing;
-using static Common.Validation.EntityConfigurationConstants;
+using Common.Options;
+using Domain.Abstract;
+using Microsoft.Extensions.Options;
+using SixLabors.ImageSharp;
 
 namespace Service
 {
-    public class AvatarService : IFilePerUserHandlingService
+    public class AvatarService : IAvatarService
     {
         private readonly IAvatarRepository _avatarRepository;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly string _uploadSubDirectoryInWwwRoot;
-        private readonly string _absoluteDirectoryPath;
-        private readonly string _relativePathInWwwRoot;
+        private readonly IBlobStorageService<AvatarContainerOptions> _blob;
+        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly AvatarSizingOptions _sizingOptions;
 
-        public AvatarService(IAvatarRepository avatarRepository, IWebHostEnvironment webHostEnvironment)
+        public AvatarService(IAvatarRepository avatarRepository,
+            IBlobStorageService<AvatarContainerOptions> blob,
+            IOptions<AvatarSizingOptions> sizingOptions,
+            IUserRepository userRepository,
+            IUnitOfWork unitOfWork)
         {
             _avatarRepository = avatarRepository;
-            _webHostEnvironment = webHostEnvironment;
-            // TODO move this to IOptions
-            _uploadSubDirectoryInWwwRoot = "data";
-            _absoluteDirectoryPath = Path.Combine(_webHostEnvironment.WebRootPath, _uploadSubDirectoryInWwwRoot,
-                nameof(Avatar));
-            _relativePathInWwwRoot = Path.Combine(_uploadSubDirectoryInWwwRoot, nameof(Avatar));
+            _blob = blob;
+            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
+            _sizingOptions = sizingOptions.Value;
         }
 
-        public async Task<string> AddAsyncAndRetrieveFileName(IFormFile image, int userId,
-            CancellationToken cancellationToken)
+        public async Task<string> AddAndGetUrlAsync(IFormFile image, int userId, CancellationToken cancellationToken)
         {
-            if (await _avatarRepository.GetByUserIdAsync(userId, cancellationToken) != null)
-            {
-                throw new ValidationException("This user already has an avatar uploaded!");
-            }
+            var user = await _userRepository.GetByIdAsync(userId, cancellationToken)
+                ?? throw new NotFoundException($"UID: ${userId} not found");
 
-            ValidateImageSize(image);
+            var imgBytes = FormFileToByteArray(image);
+            var img = Image.Load(imgBytes);
 
-            if (!Directory.Exists(_absoluteDirectoryPath))
-            {
-                Directory.CreateDirectory(_absoluteDirectoryPath);
-            }
+            ValidateImageSize(img);
 
-            var fileName = ComposeFileNameWithExtension(image, userId);
-            var absolutePath = ComposeAbsolutePath(fileName);
+            var fileName = user.Id.ToString();
 
-            await image.CopyInPathOnDiskAsync(absolutePath);
+            await _blob.UploadBlob(fileName, imgBytes, image.ContentType, cancellationToken);
 
-            var entity = new Avatar()
+            var entity = new Avatar
             {
                 UserId = userId,
-                Url = fileName
+                BlobName = fileName
             };
 
-            await _avatarRepository.AddAsync(entity, cancellationToken);
-
-            return Path.Combine(_relativePathInWwwRoot, fileName);
+            await _avatarRepository.AddAsync(entity, false, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
+            return await _blob.GetBlobUrl(fileName, ct: cancellationToken);
         }
 
-        public async Task<string> GetFileNameByUserIdAsync(int userId, CancellationToken cancellationToken)
+        public async Task<string> GetAvatarUrlAsync(int userId, CancellationToken cancellationToken)
         {
-            var avatarInfo = await GetAvatarInfoAsync(userId, cancellationToken);
-
-            if (avatarInfo == null)
+            if (await _avatarRepository.HasAvatar(userId, cancellationToken))
             {
-                return string.Empty;
+                return await _blob.GetBlobUrl(userId.ToString(), ct: cancellationToken);
             }
 
-            var fileName = avatarInfo.Url;
-
-            return Path.Combine(_relativePathInWwwRoot, fileName);
-        }
-
-        public async Task<string> UpdateFileAsyncAndRetrieveFileName(IFormFile image, int userId,
-            CancellationToken cancellationToken)
-        {
-            ValidateImageSize(image);
-
-            var avatarInfo = await GetAvatarInfoAsync(userId, cancellationToken);
-
-            if (avatarInfo == null)
-            {
-                return await AddAsyncAndRetrieveFileName(image, userId, cancellationToken);
-            }
-
-            var path = ComposeAbsolutePath(avatarInfo.Url);
-            var fileName = ComposeFileNameWithExtension(image, userId);
-
-            RemoveAvatarOnDisk(path);
-            await image.CopyInPathOnDiskAsync(path);
-
-
-            avatarInfo.Url = fileName;
-            await _avatarRepository.Update(avatarInfo, cancellationToken);
-
-
-            return Path.Combine(_relativePathInWwwRoot, fileName);
+            return string.Empty;
         }
 
         public async Task RemoveAsync(int userId, CancellationToken cancellationToken)
         {
-            var avatarInfo = await GetAvatarInfoAsync(userId, cancellationToken);
+            var avatar = await _avatarRepository.GetByUserIdAsync(userId, cancellationToken)
+                ?? throw new NotFoundException($"UID ${userId} has no avatar");
 
-            if (avatarInfo == null)
+            await _blob.DeleteBlob(avatar.BlobName, cancellationToken);
+
+            await _avatarRepository.RemoveAsync(avatar.Id, cancellationToken);
+        }
+
+        private static byte[] FormFileToByteArray(IFormFile file)
+        {
+            using (var ms = new MemoryStream())
             {
-                return;
-            }
-
-            var path = ComposeAbsolutePath(avatarInfo.Url);
-
-            RemoveAvatarOnDisk(path);
-
-            await _avatarRepository.RemoveAsync(avatarInfo.Id, cancellationToken);
-        }
-
-        private async Task<Avatar?> GetAvatarInfoAsync(int userId, CancellationToken cancellationToken)
-        {
-            var avatarInfo = await _avatarRepository.GetByUserIdAsync(userId, cancellationToken);
-
-            return avatarInfo;
-        }
-
-        private string ComposeFileNameWithExtension(IFormFile image, int userId)
-        {
-            var relativeFilePath = userId + Path.GetExtension(image.FileName);
-
-            return relativeFilePath;
-        }
-
-        private string ComposeAbsolutePath(string relativeUrl)
-        {
-            return Path.Combine(_absoluteDirectoryPath, relativeUrl);
-        }
-
-        private void RemoveAvatarOnDisk(string path)
-        {
-            using (new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 4096,
-                       FileOptions.DeleteOnClose))
-            {
+                file.CopyTo(ms);
+                var bytes = ms.ToArray();
+                return bytes;
             }
         }
 
-        private void ValidateImageSize(IFormFile file)
+        private void ValidateImageSize(Image image)
         {
-            using (var image = Image.FromStream(file.OpenReadStream()))
+            if (image.Height > _sizingOptions.Max.Height || image.Height < _sizingOptions.Min.Height)
             {
-                if (image.Width > MaxAvatarWidthPx
-                    || image.Width < MinAvatarWidthPx
-                    || image.Height > MaxAvatarHeightPx
-                    || image.Width < MinAvatarHeightPx)
-                {
-                    throw new ValidationException($"Invalid image size (W:{image.Width} H:{image.Height}) introduced");
-                }
+                throw new ValidationException($"Height should be between ${_sizingOptions.Min.Height} and ${_sizingOptions.Max.Height}");
+            }
+
+            if (image.Width > _sizingOptions.Max.Width || image.Width < _sizingOptions.Min.Width)
+            {
+                throw new ValidationException($"Width should be between ${_sizingOptions.Min.Width} and ${_sizingOptions.Max.Width}");
             }
         }
     }

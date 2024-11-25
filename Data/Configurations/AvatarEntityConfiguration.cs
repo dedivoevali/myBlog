@@ -11,7 +11,7 @@ namespace DAL.Configurations
         {
             builder.ToTable(nameof(Avatar));
 
-            builder.Property(e => e.Url)
+            builder.Property(e => e.BlobName)
                 .IsRequired();
         }
     }

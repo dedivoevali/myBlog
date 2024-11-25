@@ -138,8 +138,6 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
     const handleUpload = async () => {
 
         if (avatarFile) {
-            await avatarApi.RemoveAvatarForAuthorizedUser();
-
             avatarApi.UploadNewAvatarForAuthorizedUser(avatarFile).then((response) => {
                 notifyUser("Avatar was successfully loaded", "success");
                 setReduxAvatar(response.data);

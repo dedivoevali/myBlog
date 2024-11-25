@@ -2,6 +2,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="Azure.Storage.Common" Version="12.18.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
 
 	</ItemGroup>

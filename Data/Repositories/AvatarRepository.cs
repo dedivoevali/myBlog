@@ -13,4 +13,9 @@ public class AvatarRepository(BlogDbContext db) : BaseRepository<Avatar>(db), IA
 
         return avatarInfo;
     }
+
+    public async Task<bool> HasAvatar(int userId, CancellationToken ct)
+    {
+        return await _db.Avatars.AnyAsync(a => a.UserId == userId, ct);
+    }
 }
