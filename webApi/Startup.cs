@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
+using Service;
+using Service.Abstract;
 
 namespace API
 {
@@ -45,6 +47,8 @@ namespace API
                 var context = serviceProvider.GetRequiredService<BlogDbContext>();
                 return new UnitOfWork(context);
             });
+
+            services.AddScoped(typeof(IBlobStorageService<>), typeof(AzureBlobStorageService<>));
 
             services.AddMassTransit(busConfigurator =>
             {
