@@ -20,6 +20,20 @@ namespace API.Extensions
 
             services.Configure<PunishmentOptions>(
                 configuration.GetSection(PunishmentOptions.Config));
+
+            services.Configure<AzureStorageCredentialOptions>(
+                configuration.GetSection(AzureStorageCredentialOptions.Config));
+
+            services.Configure<AvatarSizingOptions>(
+                configuration.GetSection(AvatarSizingOptions.Config));
+
+            AddAzureContainerOptions(services, configuration);
+        }
+
+        private static void AddAzureContainerOptions(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<AvatarContainerOptions>(
+                configuration.GetSection("BlobContainers:Avatar"));
         }
     }
 }

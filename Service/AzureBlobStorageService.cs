@@ -2,7 +2,6 @@
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using Common.Options;
-using Common.Options.BlobStorageContainers;
 using Microsoft.Extensions.Options;
 using Service.Abstract;
 

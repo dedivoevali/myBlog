@@ -40,18 +40,6 @@
 
         #endregion
 
-        #region Avatar entity section
-
-        public const double MinAvatarWidthPx = 128d;
-        public const double MaxAvatarWidthPx = 512d;
-
-        public const double MinAvatarHeightPx = 128d;
-        public const double MaxAvatarHeightPx = 512d;
-
-        public const int MaxAvatarSizeBytes = 1024 * 100; // 100KB
-
-        #endregion
-
         #region Topic entity section
 
         public const int MaxTopicNameLength = 20;
