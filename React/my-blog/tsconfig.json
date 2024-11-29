@@ -8,7 +8,8 @@
     ],
     "allowJs": false,
     "types": [
-      "@types/webappsec-credential-management"
+      "@types/webappsec-credential-management",
+      "node"
     ],
     "skipLibCheck": true,
     "esModuleInterop": true,
