@@ -3,6 +3,7 @@ name: Deploy React Application To GitHubActions
 on:
   push:
     branches: [ "slave" ]
+  workflow_dispatch:
 
 jobs:
   build:
