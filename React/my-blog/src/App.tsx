@@ -19,7 +19,8 @@ function App() {
         <div className="App">
             <Routes>
                 <Route path="/" element={<Layout/>}>
-                    <Route path="me" element={<RequireAuth children={<Navigate to={`/user/${userId}`}></Navigate>}/>}/>
+                    <Route path="myBlog" element={<Navigate to='/'/>}></Route>
+                    <Route path="me" element={<RequireAuth children={<Navigate to={`/user/${userId}`}/>}/>}/>
                     <Route path="login" element={<OnlyForUnauthorized children={<LoginPage/>}/>}/>
                     <Route path="register" element={<OnlyForUnauthorized children={<RegisterPage/>}/>}/>
                     <Route path="/" element={<HomePage/>}/>
