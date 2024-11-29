@@ -1,7 +1,7 @@
-name: Frontend build + test
+name: Deploy React Application To GitHubActions
 
 on:
-  pull_request:
+  push:
     branches: [ "slave" ]
 
 jobs:
