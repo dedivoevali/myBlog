@@ -2,7 +2,7 @@
   "name": "my-blog",
   "version": "0.2.0",
   "private": true,
-  "homepage": "https://chioroglo.github.io/",
+  "homepage": "https://chioroglo.github.io/myBlog",
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
