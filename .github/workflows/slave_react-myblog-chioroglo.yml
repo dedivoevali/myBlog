@@ -29,11 +29,6 @@ jobs:
     - name: Run tests
       run: npm --prefix React/my-blog test -- --coverage --passWithNoTests
 
-    - name: Build
-      env:
-          CI: false
-      run: npm --prefix React/my-blog run build
-
     - name: 'Create dotenv file'
       run: |
         cd React/my-blog
@@ -41,7 +36,12 @@ jobs:
         echo REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} > .env
         cat .env
 
-    - name: Deploy with GitHub Pages
+    - name: Build
+      env:
+          CI: false
+      run: npm --prefix React/my-blog run build
+
+    - name: Deploy with gh-pages
       run: |
         cd React/my-blog
         git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
