@@ -38,11 +38,12 @@ jobs:
       run: |
         cd React/my-blog
         touch .env
-        echo REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} >> .env
+        echo REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} > .env
         cat .env
 
     - name: Deploy with GitHub Pages
       run: |
+        cd React/my-blog
         git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
         npm run deploy -- -u "github-actions-bot <support+actions@github.com>"
       env:
