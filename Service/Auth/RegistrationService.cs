@@ -46,10 +46,9 @@ namespace Service.Auth
             return newUserEntity;
         }
 
-        private bool PasswordsDoNotMatch(string actualPassword, string confirmationPassword)
+        private static bool PasswordsDoNotMatch(string actualPassword, string confirmationPassword)
         {
-            // TODO: Replace with String.CompareOrdinal()
-            return actualPassword != confirmationPassword;
+            return string.CompareOrdinal(actualPassword, confirmationPassword) != 0;
         }
     }
 }
