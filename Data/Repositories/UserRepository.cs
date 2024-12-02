@@ -14,6 +14,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
     public async Task<User?> GetProfileData(int userId, CancellationToken ct = default)
     {
         return await _db.Users
+            .Include(e => e.Avatar)
             .Include(e => e.Warnings.Where(e => e.RemovedAt == null))
             .FirstOrDefaultAsync(e => e.Id == userId, ct);
     }
@@ -21,5 +22,10 @@ public class UserRepository : BaseRepository<User>, IUserRepository
     public async Task<bool> IsBanned(int userId, CancellationToken ct = default)
     {
         return await _db.Users.Where(u => u.Id == userId && u.IsBanned).CountAsync(ct) > 0;
+    }
+
+    public async Task<bool> IsNicknameOccupied(string username, CancellationToken ct = default)
+    {
+        return await _db.Users.AnyAsync(u => u.Username == username, ct);
     }
 }

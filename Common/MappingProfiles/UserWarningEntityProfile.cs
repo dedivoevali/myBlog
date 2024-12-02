@@ -2,7 +2,7 @@
 using Common.Models;
 using Domain;
 
-namespace Common;
+namespace Common.MappingProfiles;
 
 public class UserWarningEntityProfile : Profile
 {

@@ -4,6 +4,8 @@ using Common.Models.Statistics;
 using DAL.Repositories.Abstract;
 using Service.Statistics;
 
+namespace UnitTests.Services;
+
 public class ContentStatisticsServiceTests
 {
     private readonly IPostRepository _postRepository;

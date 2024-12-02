@@ -1,0 +1,33 @@
+.error {
+    color: #FF0000;
+    font-style: italic;
+}
+
+.checkbox, .submit {
+    margin: 0 auto !important;
+}
+
+.register {
+    text-align: center;
+    font-style: italic;
+    text-decoration: bold;
+}
+
+.form-field {
+    max-width: 400px !important;
+    width: 20vw !important;
+    min-width: 300px !important;
+    margin: 0 auto !important;
+    padding: 0 0 20px 0 !important;
+}
+
+.block-wrapper {
+    width: 450px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form {
+    display: inline-block;
+}

@@ -5,5 +5,7 @@ export interface CommentReelProps {
     reelWidth: string,
     pagingRequestDefault?: CursorPagedRequest,
     post?: PostModel,
-    enableInfiniteScroll?: boolean
+    enableInfiniteScroll?: boolean,
+    onCommentAdded: () => void;
+    onCommentDeleted: () => void;
 }

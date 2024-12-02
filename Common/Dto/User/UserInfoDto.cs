@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices;
 using static Common.Validation.EntityConfigurationConstants;
 
 namespace Common.Dto.User

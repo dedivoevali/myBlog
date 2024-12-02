@@ -93,7 +93,7 @@ namespace Service
             await _userRepository.Update(user, cancellationToken);
         }
 
-        public async Task<ICollection<Passkey>> GetPasskeys(int userId, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Passkey>> GetPasskeys(int userId, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetByIdWithIncludeAsync(userId,
                 cancellationToken, 
