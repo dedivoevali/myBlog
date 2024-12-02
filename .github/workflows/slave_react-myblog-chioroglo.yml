@@ -28,7 +28,7 @@ jobs:
       run: |
         cd React/my-blog
         touch .env
-        echo REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} > .env
+        echo -n REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} > .env
         cat .env
 
     - name: Install dependencies
@@ -38,6 +38,8 @@ jobs:
       run: npm --prefix React/my-blog test -- --coverage --passWithNoTests
 
     - name: Build
+      env:
+        CI: false
       run: |
         cd React/my-blog
         npm run build
