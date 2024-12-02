@@ -1,5 +1,7 @@
 # MyBlog
-[![Coverage Status](https://coveralls.io/repos/github/chioroglo/myBlog/badge.svg?branch=slave)](https://coveralls.io/github/chioroglo/myBlog?branch=slave)
+[![client](https://github.com/chioroglo/myBlog/actions/workflows/slave_react-myblog-chioroglo.yml/badge.svg)](https://github.com/chioroglo/myBlog/actions/workflows/slave_react-myblog-chioroglo.yml)<br/>
+[![api](https://github.com/chioroglo/myBlog/actions/workflows/slave_api-myblog-chioroglo.yml/badge.svg)](https://github.com/chioroglo/myBlog/actions/workflows/slave_api-myblog-chioroglo.yml)<br/>
+[![Coverage Status Backend](https://coveralls.io/repos/github/chioroglo/myBlog/badge.svg?branch=slave)](https://coveralls.io/github/chioroglo/myBlog?branch=slave)<br/>
 # Used Technologies:
 
 Microsoft SQL Server
