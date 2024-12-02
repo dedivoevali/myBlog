@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using ProfanityFilter.Interfaces;
 using Service;
 
-namespace UnitTests;
+namespace UnitTests.Services;
 
 public class SemanticAnalysisServiceTests
 {
@@ -26,7 +26,7 @@ public class SemanticAnalysisServiceTests
         _options.DetectLanguage = false;
         var text = "This is a test with profanity.";
         var profanities = new List<string> { "profanity" };
-        _profanityFilter.DetectAllProfanities(text).Returns((profanities.AsReadOnly()));
+        _profanityFilter.DetectAllProfanities(text).Returns(profanities.AsReadOnly());
         _profanityFilter.CensorString(text).Returns("This is a test with *****.");
 
         // Act
