@@ -20,6 +20,11 @@ public class CommentEntityProfile : Profile
             .ForMember(e => e.PostTitle, opt => opt.MapFrom(e => e.Post.Title));
 
         CreateMap<CommentDto, Comment>()
+            .ForMember(e => e.Id, opt => opt.Ignore())
+            .ForMember(e => e.UserId, opt => opt.Ignore())
+            .ForMember(e => e.User, opt => opt.Ignore())
+            .ForMember(e => e.Post, opt => opt.Ignore())
+            .ForMember(e => e.RegistrationDate, opt => opt.Ignore())
             .ForMember(e => e.Content, opt => opt.MapFrom(e => e.Content))
             .ForMember(e => e.PostId, opt => opt.MapFrom(e => e.PostId));
     }

@@ -21,11 +21,16 @@ namespace Common.MappingProfiles
                 .ForMember(dst => dst.Language, opt => opt.MapFrom(src => src.DetectedLanguage));
 
             CreateMap<PostDto, Post>()
-                .ForMember(dst => dst.Title,
-                    opt => opt.MapFrom(src => src.Title))
+                .ForMember(dst => dst.UserId, opt => opt.Ignore())
+                .ForMember(dst => dst.User, opt => opt.Ignore())
+                .ForMember(dst => dst.Comments, opt => opt.Ignore())
+                .ForMember(dst => dst.Reactions, opt => opt.Ignore())
+                .ForMember(dst => dst.DetectedLanguage, opt => opt.Ignore())
+                .ForMember(dst => dst.Id, opt => opt.Ignore())
+                .ForMember(dst => dst.RegistrationDate, opt => opt.Ignore())
+                .ForMember(dst => dst.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dst => dst.Content, opt => opt.MapFrom(src => src.Content))
-                .ForMember(dst => dst.Topic,
-                    opt => opt.MapFrom(src => String.IsNullOrWhiteSpace(src.Topic) ? null : src.Topic));
+                .ForMember(dst => dst.Topic, opt => opt.MapFrom(src => string.IsNullOrWhiteSpace(src.Topic) ? null : src.Topic));
         }
     }
 }

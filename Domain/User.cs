@@ -20,7 +20,8 @@ namespace Domain
         public ICollection<UserWarning> Warnings { get; set; } 
         public ICollection<UserBanLog> BanLogs { get; set; }
         public bool IsBanned { get; set; }
-        public string Initials { get; set; }
+        public string Initials { get; init; }
+        public bool HasAvatar => Avatar != null;
         public string? FullName => FirstName != null && LastName != null ? $"{FirstName} {LastName}" : null;
     }
 }

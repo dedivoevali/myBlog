@@ -9,4 +9,5 @@ export interface UserModel {
     lastActivity: string
     activeWarnings: UserWarningModel[]
     isBanned: boolean;
+    hasAvatar: boolean;
 }

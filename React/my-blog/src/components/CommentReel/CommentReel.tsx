@@ -28,7 +28,9 @@ const CommentReel = ({
                              }, pageSize: DefaultPageSize, getNewer: false
                          },
                          post,
-                         enableInfiniteScroll = false
+                         enableInfiniteScroll = false,
+                         onCommentAdded,
+                         onCommentDeleted
                      }: CommentReelProps) => {
 
 
@@ -50,6 +52,7 @@ const CommentReel = ({
 
     const handleDeleteComment = (commentToDeleteId: number) => {
         setComments(comments.filter((comment) => comment.id !== commentToDeleteId))
+        onCommentDeleted();
     };
 
 
@@ -90,6 +93,7 @@ const CommentReel = ({
                 setComments([result.data, ...comments]);
             }
             setLoading(false);
+            onCommentAdded();
             return result;
         }).catch(result => result);
     }

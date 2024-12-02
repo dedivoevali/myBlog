@@ -42,10 +42,9 @@ namespace API.Controllers
             var request = _mapper.Map<PostReaction>(dto);
             request.UserId = CurrentUserId;
 
-            await _postReactionService.Add(request, cancellationToken);
+            var createdPost = await _postReactionService.Add(request, cancellationToken);
 
-            var newlyCreatedReaction = _mapper.Map<PostReactionModel>(dto);
-            newlyCreatedReaction.UserId = CurrentUserId;
+            var newlyCreatedReaction = _mapper.Map<PostReactionModel>(createdPost);
 
             return newlyCreatedReaction;
         }

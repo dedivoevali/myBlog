@@ -3,6 +3,7 @@ using Common.Dto.Auth;
 using Common.Exceptions;
 using DAL.Repositories.Abstract;
 using Domain;
+using Domain.Abstract;
 using Service.Abstract.Auth;
 
 namespace Service.Auth
@@ -12,9 +13,14 @@ namespace Service.Auth
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IEncryptionService _encryptionService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RegistrationService(IUserRepository userRepository, IMapper mapper, IEncryptionService encryptionService)
+        public RegistrationService(IUserRepository userRepository,
+            IMapper mapper,
+            IEncryptionService encryptionService,
+            IUnitOfWork unitOfWork)
         {
+            _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _mapper = mapper;
             _encryptionService = encryptionService;
@@ -22,7 +28,7 @@ namespace Service.Auth
 
         public async Task<User> RegisterAsync(RegistrationDto registerData, CancellationToken cancellationToken)
         {
-            if (await IsNicknameOccupied(registerData.Username, cancellationToken))
+            if (await _userRepository.IsNicknameOccupied(registerData.Username, cancellationToken))
             {
                 throw new ValidationException($"Username {registerData.Username} is occupied");
             }
@@ -35,17 +41,9 @@ namespace Service.Auth
             var newUserEntity = _mapper.Map<User>(registerData);
             newUserEntity.PasswordHash = _encryptionService.EncryptPassword(newUserEntity.Password);
 
-            newUserEntity = await _userRepository.AddAsync(newUserEntity, cancellationToken);
-
+            newUserEntity = await _userRepository.AddAsync(newUserEntity, false, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return newUserEntity;
-        }
-
-        private async Task<bool> IsNicknameOccupied(string username, CancellationToken cancellationToken)
-        {
-            var requestOfUserOfProvidedNickname =
-                await _userRepository.GetWhereAsync(u => u.Username == username, cancellationToken);
-
-            return requestOfUserOfProvidedNickname.Any();
         }
 
         private bool PasswordsDoNotMatch(string actualPassword, string confirmationPassword)

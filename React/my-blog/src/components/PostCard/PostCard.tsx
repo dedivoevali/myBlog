@@ -82,10 +82,28 @@ const PostCard = ({
 
     const [avatarLink, setAvatarLink] = useState("");
     const [commentsOpen, setCommentsOpen] = useState<boolean>(false);
+    const [commentsTouched, setCommentsTouched] = useState<boolean>(false);
 
     const fetchAvatarUrl = (userId: number) => userApi.getAvatarUrlById(userId).then(response => setAvatarLink(response.data));
+    const touchComments = () => setCommentsTouched(true);
 
-    const handleExpandCommentSection = () => setCommentsOpen(!commentsOpen);
+    const handleExpandCommentSection = () => {
+        touchComments();
+        setCommentsOpen(!commentsOpen);
+    };
+    const onCommentDeleted = () => {
+        setPost({
+            ...post,
+            amountOfComments: post.amountOfComments - 1
+        });
+    }
+
+    const onCommentAdded = () => {
+        setPost({
+            ...post,
+            amountOfComments: post.amountOfComments + 1
+        })
+    }
 
     const handleEditPost = async (newPost: PostDto): Promise<AxiosResponse<PostModel>> => {
         return postApi.editPost(post.id, newPost).then((result: AxiosResponse<PostModel>) => {
@@ -198,8 +216,13 @@ const PostCard = ({
 
                             <Collapse in={commentsOpen} orientation={"vertical"} timeout={"auto"}>
                                 <CardContent>
-                                    <CommentReel enableInfiniteScroll={enableCommentInfiniteScroll} reelWidth={"100%"}
-                                                 pagingRequestDefault={commentsPagingRequestDefault} post={post}/>
+                                    {commentsTouched && <CommentReel
+                                        enableInfiniteScroll={enableCommentInfiniteScroll}
+                                        reelWidth={"100%"}
+                                        pagingRequestDefault={commentsPagingRequestDefault}
+                                        post={post}
+                                        onCommentDeleted={onCommentDeleted}
+                                        onCommentAdded={onCommentAdded}/>}
                                 </CardContent>
                             </Collapse>
                         </>

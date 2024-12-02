@@ -68,10 +68,8 @@ namespace API.Controllers
         public async Task<IActionResult> GetPasskeyList(CancellationToken cancellationToken)
         {
             var passkeys = await _userService.GetPasskeys(CurrentUserId, cancellationToken);
-            return Ok(new PasskeyListModel
-            {
-                Passkeys = _mapper.Map<List<PasskeyInfoModel>>(passkeys)
-            });
+            var model = _mapper.Map<PasskeyListModel>(passkeys);
+            return Ok(model);
         }
     }
 }

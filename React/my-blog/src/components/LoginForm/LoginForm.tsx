@@ -1,57 +1,33 @@
-import {AssignmentInd,} from '@mui/icons-material';
-import {Button, Checkbox, FormControl, FormControlLabel, FormHelperText, Input, InputLabel, Paper} from '@mui/material';
-import {useFormik} from 'formik';
-import React, {useEffect, useState} from 'react';
-import {authApi, userApi} from '../../shared/api/http/api';
-import {AuthenticateResponse, ErrorResponse} from '../../shared/api/types';
-import {palette, PasswordValidationConstraints, UsernameValidationConstraints} from '../../shared/assets';
-import {FormHeader} from '../FormHeader';
-import {AuthenticationFormProps} from './AuthenticationFormProps';
+import { AssignmentInd, } from '@mui/icons-material';
+import { Button, Checkbox, FormControl, FormControlLabel, FormHelperText, Input, InputLabel, Paper } from '@mui/material';
+import { useFormik } from 'formik';
+import React, { useEffect, useState } from 'react';
+import { authApi, userApi } from '../../shared/api/http/api';
+import { AuthenticateResponse, ErrorResponse } from '../../shared/api/types';
+import { palette, PasswordValidationConstraints, UsernameValidationConstraints } from '../../shared/assets';
+import { FormHeader } from '../FormHeader';
+import { AuthenticationFormProps } from './AuthenticationFormProps';
 import * as Yup from 'yup';
-import {AxiosError, AxiosResponse} from 'axios';
-import {CenteredLoader} from '../CenteredLoader';
-import {useDispatch} from 'react-redux';
-import {ReduxActionTypes} from '../../redux';
-import {Link} from 'react-router-dom';
-import {useNotifier} from '../../hooks';
-import {UserInfoCache} from "../../shared/types";
+import { AxiosError, AxiosResponse } from 'axios';
+import { CenteredLoader } from '../CenteredLoader';
+import { useDispatch } from 'react-redux';
+import { ReduxActionTypes } from '../../redux';
+import { Link } from 'react-router-dom';
+import { useNotifier } from '../../hooks';
+import { UserInfoCache } from "../../shared/types";
 import { PasskeyApi } from '../../shared/api/http/passkey-api';
 import { WebauthnService } from '../../shared/services/webauthn-service';
 import { arrayBufferToBase64, arrayBufferToUtf8 } from '../../shared/assets/array-buffer-utils';
 import { PasskeyAuthenticationRequest } from '../../shared/api/types/authentication/passkey/passkey-authentication-request';
+import styles from  './login-form.module.scss';
 
-const textFieldStyle: React.CSSProperties = {
-    maxWidth: "400px",
-    width: "20vw",
-    minWidth: "300px",
-    margin: "0 auto",
-    padding: "0 0 20px 0"
-};
-
-const paperStyle: React.CSSProperties = {
-    width: "450px",
-    padding: "20px",
-    display: "flex",
-    flexDirection: "column"
-}
-
-const buttonStyle: React.CSSProperties = {
-    margin: "0 auto"
-}
-
-const checkboxStyle: React.CSSProperties = {
-    margin: "0 auto"
-}
-
-const errorTextStyle: React.CSSProperties = {
-    color: "red",
-    fontStyle: "italic"
-}
+const PASSKEY_OPERATION_CANCELED = "Passkey Operation Canceled";
 
 const LoginForm = () => {
 
     const passkeyApi = PasskeyApi.create();
     const webauthnService = new WebauthnService(navigator, window);
+    const passkeyAbortController = new AbortController();
 
     const dispatch = useDispatch();
 
@@ -65,10 +41,14 @@ const LoginForm = () => {
     const displayNotification = useNotifier();
     const notifySucessfullAuth = () => displayNotification("Authorization successfull", "success");
 
+    // clean up after destroy
+    useEffect(() => {
+        return () => passkeyAbortController.abort(PASSKEY_OPERATION_CANCELED);
+    }, []);
+
     useEffect(() => {
         passkeyApi.getAuthenticationOptions().then((response) => {
-            const ac = new AbortController();
-            webauthnService.authenticateCredentialRequest(response, ac).then((resp) => {
+            webauthnService.authenticateCredentialRequest(response, passkeyAbortController).then((resp) => {
 
                 const credential = resp?.credential;
                 const challenge = resp?.challenge;
@@ -101,6 +81,10 @@ const LoginForm = () => {
                     notifySucessfullAuth();
                 })
                 .catch((err) => displayNotification(err.response.data.Message, "error"));
+                
+            }).catch((err) => {
+                console.log(err);
+                // Supress
             });
         }).catch(err => {
             if (err.status !== 404) { // Not found is thrown when passkey feature is disabled
@@ -150,44 +134,41 @@ const LoginForm = () => {
     return (
         <>
             {loading ?
-                <CenteredLoader/>
+                <CenteredLoader />
                 :
-                <form style={{display: "inline-block"}} onSubmit={formik.handleSubmit}>
+                <form className={styles.form} onSubmit={formik.handleSubmit}>
 
-                    <Paper style={paperStyle} elevation={12}>
+                    <Paper className={styles["block-wrapper"]} elevation={12}>
 
-                        <FormHeader iconColor={palette.SOFT_ORANGE} caption="Login" icon={<AssignmentInd/>}/>
+                        <FormHeader iconColor={palette.SOFT_ORANGE} caption="Login" icon={<AssignmentInd />} />
 
-                        <FormControl style={textFieldStyle}>
+                        <FormControl className={styles["form-field"]}>
                             <InputLabel htmlFor="username">Username</InputLabel>
-                            <Input onChange={formik.handleChange} value={formik.values.username} name="username" autoComplete="username webauthn"/>
+                            <Input onChange={formik.handleChange} value={formik.values.username} name="username" autoComplete="username webauthn" />
                             <FormHelperText>
                                 {formik.touched.username && formik.errors.username && (
-                                    <span style={errorTextStyle}>{formik.errors.username}</span>)}
+                                    <span className={styles.error}>{formik.errors.username}</span>)}
                             </FormHelperText>
                         </FormControl>
 
-                        <FormControl style={textFieldStyle}>
+                        <FormControl className={styles["form-field"]}>
                             <InputLabel htmlFor="password">Password</InputLabel>
                             <Input type="password" onChange={formik.handleChange} value={formik.values.password}
-                                   name="password" autoComplete="current-password webauthn"/>
+                                name="password" autoComplete="current-password webauthn" />
                             <FormHelperText>
                                 {formik.touched.password && formik.errors.password && (
-                                    <span style={errorTextStyle}>{formik.errors.password}</span>)}
+                                    <span className={styles.error}>{formik.errors.password}</span>)}
                             </FormHelperText>
                         </FormControl>
 
-                        <FormControlLabel name="rememberMe" style={checkboxStyle} onChange={formik.handleChange}
-                                          label="Remember me?" control={<Checkbox/>}/>
+                        <FormControlLabel name="rememberMe" className={styles.checkbox} onChange={formik.handleChange}
+                            label="Remember me?" control={<Checkbox />} />
 
-                        <Button variant="outlined" style={buttonStyle} type="submit">Log in</Button>
+                        <Button variant="outlined" className={styles.submit} type="submit">Log in</Button>
 
-                        <Link style={{
-                            textAlign: "center",
-                            fontStyle: "italic",
-                            textDecoration: "bold",
-                            color: palette.JET
-                        }} to="/register">Do not have an account? <u>Click here</u></Link>
+                        <Link className={styles.register} style={{ color: palette.JET }} to="/register">
+                            Do not have an account? <u>Click here</u>
+                        </Link>
                     </Paper>
                 </form>
             }

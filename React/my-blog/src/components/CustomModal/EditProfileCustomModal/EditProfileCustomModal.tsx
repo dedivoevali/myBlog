@@ -1,6 +1,6 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
-import {CustomModal} from '../CustomModal';
-import {EditProfileCustomModalProps} from "./EditProfileCustomModalProps";
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import { CustomModal } from '../CustomModal';
+import { EditProfileCustomModalProps } from "./EditProfileCustomModalProps";
 import {
     Avatar,
     Box,
@@ -13,26 +13,26 @@ import {
     InputLabel
 } from "@mui/material";
 import * as Yup from "yup";
-import {useFormik} from "formik";
-import {UserInfoDto, UserModel} from "../../../shared/api/types/user";
+import { useFormik } from "formik";
+import { UserInfoDto, UserModel } from "../../../shared/api/types/user";
 import {
     FirstnameLastnameConstraints,
     palette,
     UsernameValidationConstraints
 } from "../../../shared/assets";
-import {FormHeader} from '../../FormHeader';
+import { FormHeader } from '../../FormHeader';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import {avatarApi, userApi} from '../../../shared/api/http/api';
-import {AxiosError, AxiosResponse} from "axios";
-import {useNotifier} from '../../../hooks';
-import {ErrorResponse} from "../../../shared/api/types";
+import { avatarApi, userApi } from '../../../shared/api/http/api';
+import { AxiosError, AxiosResponse } from "axios";
+import { useNotifier } from '../../../hooks';
+import { ErrorResponse } from "../../../shared/api/types";
 import UploadFileRoundedIcon from '@mui/icons-material/UploadFileRounded';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
-import {ApplicationState, ReduxActionTypes} from '../../../redux';
-import {useDispatch, useSelector} from 'react-redux';
-import {UserInfoCache} from '../../../shared/types';
-import {MaxAvatarSizeBytes} from "../../../shared/config";
-import styles from  './edit-profile-custom-modal.module.scss';
+import { ApplicationState, ReduxActionTypes } from '../../../redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { UserInfoCache } from '../../../shared/types';
+import { MaxAvatarSizeBytes } from "../../../shared/config";
+import styles from './edit-profile-custom-modal.module.scss';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { RegisterPasskeyButton } from '../../RegisterPasskeyButton';
 import { PasskeyList } from '../../PasskeyList/PasskeyList';
@@ -151,7 +151,7 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
     }
 
     const handleDeleteAvatar = () => {
-        avatarApi.RemoveAvatarForAuthorizedUser().then((response) => {
+        avatarApi.RemoveAvatarForAuthorizedUser().then(() => {
             notifyUser("Avatar was successfully removed", "success");
             setAvatarPreview("");
             setReduxAvatar("");
@@ -161,7 +161,7 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
     }
 
     useEffect(() => {
-        fetchAvatarUrl(user?.id || 0).then((result) => setAvatarPreview((result)));
+        fetchAvatarUrl(user.id).then((result) => setAvatarPreview((result)));
     }, []);
 
 
@@ -193,7 +193,7 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
                         <Button onClick={handleUpload} color={"primary"} variant={"contained"}
                                 startIcon={<UploadFileRoundedIcon/>}>Upload new avatar</Button>
 
-                        <Button onClick={handleDeleteAvatar} color={"error"} variant={"contained"}
+                        <Button disabled={!user.hasAvatar} onClick={handleDeleteAvatar} color={"error"} variant={"contained"}
                                 startIcon={<CancelRoundedIcon/>}>Remove Avatar</Button>
 
 
