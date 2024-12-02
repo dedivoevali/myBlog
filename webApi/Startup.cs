@@ -2,6 +2,7 @@
 using API.Extensions.Auth;
 using API.Middlewares;
 using Common;
+using Common.Options;
 using DAL;
 using Domain.Abstract;
 using HealthChecks.UI.Client;
@@ -52,23 +53,26 @@ namespace API
 
             services.AddMassTransit(busConfigurator =>
             {
-
                 busConfigurator.AddDelayedMessageScheduler();
                 busConfigurator.SetKebabCaseEndpointNameFormatter();
                 busConfigurator.AddConsumersFromNamespaceContaining(typeof(API.AssemblyReference));
 
-                busConfigurator.UsingRabbitMq((context, configurator) =>
+                var options = MessageBrokerInitializer.AddOptions(Configuration, services);
+
+                switch (options.Provider)
                 {
-                    configurator.Host(Configuration["MessageBus:Host"]!, h =>
+                    case MessageBrokerProvider.InMemory:
                     {
-                        h.Username(Configuration["MessageBus:Username"]!);
-                        h.Password(Configuration["MessageBus:Password"]!);
-                    });
-                    configurator.UseDelayedMessageScheduler();
-                    configurator.MapProducers(context)
-                        .MapConsumers(context);
-                    configurator.ConfigureEndpoints(context);
-                });
+                        MessageBrokerInitializer.ConfigureInMemory(busConfigurator);
+                        break;
+                    }
+                    case MessageBrokerProvider.Rabbit:
+                    {
+                        MessageBrokerInitializer.ConfigureRabbitMq(busConfigurator, Configuration);
+                        break;
+                    }
+                }
+
             });
 
             services.AddAutoMapper(typeof(MappingAssemblyMarker).Assembly);
