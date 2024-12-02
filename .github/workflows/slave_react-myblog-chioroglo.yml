@@ -24,23 +24,23 @@ jobs:
         cache: 'npm'
         cache-dependency-path: React/my-blog/package-lock.json
 
-    - name: Install dependencies
-      run: npm --prefix React/my-blog install
-
-    - name: Run tests
-      run: npm --prefix React/my-blog test -- --coverage --passWithNoTests
-
-    - name: 'Create dotenv file'
+    - name: Create dotenv file
       run: |
         cd React/my-blog
         touch .env
         echo REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} > .env
         cat .env
 
+    - name: Install dependencies
+      run: npm --prefix React/my-blog install
+
+    - name: Run tests
+      run: npm --prefix React/my-blog test -- --coverage --passWithNoTests
+
     - name: Build
-      env:
-          CI: false
-      run: npm --prefix React/my-blog run build
+      run: |
+        cd React/my-blog
+        npm run build
 
     - name: Deploy with gh-pages
       run: |
