@@ -58,22 +58,32 @@ namespace Service
 
             await _blob.UploadBlob(fileName, imgBytes, image.ContentType, cancellationToken);
 
-            var entity = new Avatar
-            {
-                UserId = userId,
-                BlobName = fileName
-            };
+            var existingAvatar = await _avatarRepository.GetByUserIdAsync(user.Id, cancellationToken);
 
-            await _avatarRepository.AddAsync(entity, false, cancellationToken);
+            if (existingAvatar == null)
+            {
+                var entity = new Avatar
+                {
+                    UserId = userId,
+                    BlobName = fileName
+                };
+                await _avatarRepository.AddAsync(entity, false, cancellationToken);
+            }
+            else
+            {
+                existingAvatar.BlobName = fileName;
+            }
+
             await _unitOfWork.CommitAsync(cancellationToken);
-            return await GetBlobUrl(user.Id, cancellationToken);
+            await PurgeCache(userId, cancellationToken);
+            return await GetBlobUrlWithCache(user.Id, cancellationToken);
         }
 
         public async Task<string?> GetAvatarUrlAsync(int userId, CancellationToken cancellationToken)
         {
             if (await _avatarRepository.HasAvatar(userId, cancellationToken))
             {
-                return await GetBlobUrl(userId, cancellationToken);
+                return await GetBlobUrlWithCache(userId, cancellationToken);
             }
 
             return string.Empty;
@@ -87,6 +97,7 @@ namespace Service
             await _blob.DeleteBlob(avatar.BlobName, cancellationToken);
 
             await _avatarRepository.RemoveAsync(avatar.Id, cancellationToken);
+            await PurgeCache(userId, cancellationToken);
         }
 
         private static byte[] FormFileToByteArray(IFormFile file)
@@ -112,7 +123,7 @@ namespace Service
             }
         }
 
-        private async Task<string?> GetBlobUrl(int userId, CancellationToken ct)
+        private async Task<string?> GetBlobUrlWithCache(int userId, CancellationToken ct)
         {
             var blobName = userId.ToString();
             var cacheKey = GetAvatarUrlCacheKey(userId);
@@ -134,6 +145,12 @@ namespace Service
                 _logger.LogError("UID: {0} has avatar in database, but blob was not found", userId);
             }
             return url;
+        }
+
+        private async Task PurgeCache(int userId, CancellationToken ct)
+        {
+            var cacheKey = GetAvatarUrlCacheKey(userId);
+            await _cache.RemoveAsync(cacheKey, ct);
         }
     }
 }
