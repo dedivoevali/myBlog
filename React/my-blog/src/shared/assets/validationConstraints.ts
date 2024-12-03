@@ -24,3 +24,7 @@ export const PostValidationConstraints = {
 export const CommentValidationConstraints = {
     ContentMaxLength: 1000
 }
+
+export const commonValidationConstraints = {
+    isAlphaNumeric: /^[a-zA-Z0-9_]+$/
+}
