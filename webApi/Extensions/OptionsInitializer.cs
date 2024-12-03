@@ -24,8 +24,8 @@ namespace API.Extensions
             services.Configure<AzureStorageCredentialOptions>(
                 configuration.GetSection(AzureStorageCredentialOptions.Config));
 
-            services.Configure<AvatarSizingOptions>(
-                configuration.GetSection(AvatarSizingOptions.Config));
+            services.Configure<AvatarOptions>(
+                configuration.GetSection(AvatarOptions.Config));
 
             AddAzureContainerOptions(services, configuration);
         }
