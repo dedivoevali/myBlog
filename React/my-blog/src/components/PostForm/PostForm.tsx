@@ -1,25 +1,17 @@
-import React, {useState} from 'react';
-import {useFormik} from "formik";
-import {PostDto} from "../../shared/api/types/post";
+import React, { useState } from 'react';
+import { useFormik } from "formik";
+import { PostDto } from "../../shared/api/types/post";
 import * as Yup from 'yup';
-import {palette, PostValidationConstraints} from "../../shared/assets";
-import {Box, Button, FormControl, FormHelperText, IconButton, Paper, TextField} from '@mui/material';
-import {PostFormProps} from "./PostFormProps";
-import {FormHeader} from '../FormHeader';
+import { commonValidationConstraints, palette, PostValidationConstraints } from "../../shared/assets";
+import { Box, Button, FormControl, FormHelperText, IconButton, Paper, TextField } from '@mui/material';
+import { PostFormProps } from "./PostFormProps";
+import { FormHeader } from '../FormHeader';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
-import {AxiosError} from "axios";
+import { AxiosError } from "axios";
 import CloseIcon from '@mui/icons-material/Close';
-import {useNotifier} from "../../hooks";
-import {CenteredLoader} from '../CenteredLoader';
-
-const textFieldStyle: React.CSSProperties = {
-    padding: "0 0 20px 0"
-}
-
-const errorTextStyle: React.CSSProperties = {
-    color: "red",
-    fontStyle: "italic"
-}
+import { useNotifier } from "../../hooks";
+import { CenteredLoader } from '../CenteredLoader';
+import styles from "./post-form.module.scss";
 
 const PostForm = ({
                       initialPost = {content: "", title: "", topic: ""},
@@ -55,7 +47,10 @@ const PostForm = ({
             validationSchema: Yup.object({
                 title: Yup.string()
                     .required()
-                    .max(PostValidationConstraints.TitleMaxLength),
+                    .max(PostValidationConstraints.TitleMaxLength)
+                    .matches(commonValidationConstraints.isAlphaNumeric, {
+                        message: "Title should be alphanumeric"
+                    }),
                 content: Yup.string()
                     .required()
                     .max(PostValidationConstraints.ContentMaxLength),
@@ -63,6 +58,9 @@ const PostForm = ({
                     .nullable()
                     .optional()
                     .max(PostValidationConstraints.TopicMaxLength)
+                    .matches(commonValidationConstraints.isAlphaNumeric, {
+                        message: "Topic should be alphanumeric"
+                    })
             })
         }
     );
@@ -83,34 +81,45 @@ const PostForm = ({
                     }}>
                         <FormHeader iconColor={palette.JET} caption={caption} icon={<AutoFixHighIcon/>}></FormHeader>
 
-                        <form style={{width: "70%", display: "flex", flexDirection: "column"}}
-                              onSubmit={formik.handleSubmit}>
+                        <form className={styles["form"]} onSubmit={formik.handleSubmit}>
                             <FormControl>
                                 <FormHelperText>
                                     {formik.touched.title && formik.errors.title &&
-                                        <span style={errorTextStyle}>{formik.errors.title}</span>}
+                                        <span className={styles["form__error"]}>
+                                            {formik.errors.title}
+                                        </span>}
                                 </FormHelperText>
-                                <TextField style={textFieldStyle} name="title" label="Title" placeholder="Title"
-                                           value={formik.values.title} onChange={formik.handleChange}/>
+                                <TextField className={styles["form__text-field"]}
+                                    name="title"
+                                    label="Title"
+                                    placeholder="Title"
+                                    value={formik.values.title}
+                                    onChange={formik.handleChange}/>
                             </FormControl>
 
                             <FormControl>
                                 <FormHelperText>
                                     {formik.touched.topic && formik.errors.topic &&
-                                        <span style={errorTextStyle}>{formik.errors.topic}</span>}
+                                        <span className={styles["form__error"]}>
+                                            {formik.errors.topic}
+                                            </span>}
                                 </FormHelperText>
-                                <TextField style={textFieldStyle} name="topic" label="Topic (optional)"
-                                           value={formik.values.topic}
-                                           onChange={formik.handleChange}/>
+                                <TextField className={styles["form__text-field"]}
+                                    name="topic"
+                                    label="Topic (optional)"
+                                    value={formik.values.topic}
+                                    onChange={formik.handleChange}/>
                             </FormControl>
 
                             <FormControl>
                                 <FormHelperText>
                                     {formik.touched.content && formik.errors.content &&
-                                        <span style={errorTextStyle}>{formik.errors.content}</span>}
+                                        <span className={styles["form__error"]}>
+                                            {formik.errors.content}
+                                        </span>}
                                 </FormHelperText>
 
-                                <TextField style={textFieldStyle}
+                                <TextField className={styles["form__text-field"]}
                                            name="content"
                                            label="Content"
                                            placeholder="Content"
@@ -124,7 +133,6 @@ const PostForm = ({
                             <Button disabled={JSON.stringify(formik.values) === JSON.stringify(formik.initialValues)}
                                     type={"submit"}>Submit</Button>
                         </form>
-
 
                         <Box>
                             <IconButton onClick={formCloseHandler}>
