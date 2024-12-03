@@ -9,6 +9,7 @@ import {CommentDto} from "../types/comment";
 import {UserInfoDto, UserModel} from "../types/user";
 import { PasskeyListModel } from "../types/authentication/passkey/passkey-info-model";
 
+const IMMEDIATE_LOGOUT_STATUSES = [ HttpStatusCode.Unauthorized, HttpStatusCode.Forbidden ];
 
 export const instance = axios.create({
     withCredentials: false,
@@ -27,7 +28,7 @@ instance.interceptors.request.use((config) => {
 
 instance.interceptors.response.use((response) => response,
 (err) => {
-    if (err.status === HttpStatusCode.Forbidden) {
+    if (IMMEDIATE_LOGOUT_STATUSES.includes(err.status)) {
         localStorage.clear();
         sessionStorage.clear();
         window.location.reload();

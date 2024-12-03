@@ -6,8 +6,6 @@ using Service.Abstract;
 
 namespace Service;
 
-
-
 public class RedisDistributedCacheService(IDistributedCache distributedCache, IOptions<CacheOptions> options) : ICacheService
 {
     private readonly DistributedCacheEntryOptions _cacheOptions = new()
@@ -15,25 +13,25 @@ public class RedisDistributedCacheService(IDistributedCache distributedCache, IO
         AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.DefaultExpirationInMinutes)
     };
 
-    public async Task<T?> GetAsync<T>(string cacheKey)
+    public async Task<T?> GetAsync<T>(string cacheKey, CancellationToken ct)
     {
-        var stringValue = await distributedCache.GetStringAsync(cacheKey);
+        var stringValue = await distributedCache.GetStringAsync(cacheKey, ct);
         return string.IsNullOrWhiteSpace(stringValue) ? default! : JsonSerializer.Deserialize<T>(stringValue);
     }
 
-    public async Task<string?> GetStringAsync(string cacheKey)
+    public async Task<string?> GetStringAsync(string cacheKey, CancellationToken ct)
     {
-        var stringValue = await distributedCache.GetStringAsync(cacheKey);
+        var stringValue = await distributedCache.GetStringAsync(cacheKey, ct);
 
-        return string.IsNullOrWhiteSpace(stringValue) ? default! : stringValue;
+        return string.IsNullOrWhiteSpace(stringValue) ? default! : stringValue.Trim('"');
     }
 
-    public async Task RemoveAsync(string cacheKey)
+    public async Task RemoveAsync(string cacheKey, CancellationToken ct)
     {
-        await distributedCache.RemoveAsync(cacheKey);
+        await distributedCache.RemoveAsync(cacheKey, ct);
     }
 
-    public async Task SetAsync<T>(string cacheKey, T value, TimeSpan? expiration = null)
+    public async Task SetAsync<T>(string cacheKey, T value, TimeSpan? expiration = null, CancellationToken ct = default)
     {
         if (value is null)
             return;
@@ -42,10 +40,11 @@ public class RedisDistributedCacheService(IDistributedCache distributedCache, IO
 
         if (expiration is not null)
         {
-            await distributedCache.SetStringAsync(cacheKey, serializedValue, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = expiration });
+            var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = expiration };
+            await distributedCache.SetStringAsync(cacheKey, serializedValue, options , ct);
             return;
         }
 
-        await distributedCache.SetStringAsync(cacheKey, serializedValue, _cacheOptions);
+        await distributedCache.SetStringAsync(cacheKey, serializedValue, _cacheOptions, ct);
     }
 }

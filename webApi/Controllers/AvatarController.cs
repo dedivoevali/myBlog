@@ -28,7 +28,7 @@ namespace API.Controllers
 
         [HttpPost]
         [UpdatesUserActivity]
-        public async Task<string> UploadAvatarAndReturnLinkAsync([FromForm] AvatarDto request, CancellationToken cancellationToken)
+        public async Task<string?> UploadAvatarAndReturnLinkAsync([FromForm] AvatarDto request, CancellationToken cancellationToken)
         {
             var uri = await _avatarService.AddAndGetUrlAsync(request.Image, CurrentUserId, cancellationToken);
             return uri;
