@@ -24,6 +24,9 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
+      - name: Test
+        run: dotnet test
+      
       - name: dotnet publish
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
@@ -33,6 +36,32 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
+  publish-coverage:
+    runs-on: windows-latest
+    needs:
+      - build
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+      
+      - name: Build with dotnet
+        run: dotnet build
+        
+      - name: Collect Code Coverage
+        run: dotnet test /p:CollectCoverage=true /p:CoverletOutputDirectory=TestResults/ /p:CoverletOutputFormat=lcov
+      
+      - name: Publish Coverage Results to coveralls.io
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          path-to-lcov: UnitTests/coverage.info
+
+      
   deploy:
     runs-on: windows-latest
     needs: build
