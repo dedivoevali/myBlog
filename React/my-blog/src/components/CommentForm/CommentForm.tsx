@@ -1,27 +1,17 @@
-import React, {useState} from 'react';
-import {CommentFormProps} from "./CommentFormProps";
-import {Box, Button, FormControl, FormHelperText, IconButton, Paper, TextField} from "@mui/material";
-import {useFormik} from "formik";
-import {CommentDto} from '../../shared/api/types/comment';
-import {AxiosError} from "axios";
+import React, { useState } from 'react';
+import { CommentFormProps } from "./CommentFormProps";
+import { Box, Button, FormControl, FormHelperText, IconButton, Paper, TextField } from "@mui/material";
+import { useFormik } from "formik";
+import { CommentDto } from '../../shared/api/types/comment';
+import { AxiosError } from "axios";
 import * as Yup from "yup";
-import {CommentValidationConstraints, palette} from "../../shared/assets";
-import {FormHeader} from '../FormHeader';
+import { CommentValidationConstraints, palette } from "../../shared/assets";
+import { FormHeader } from '../FormHeader';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import CloseIcon from "@mui/icons-material/Close";
-import {useNotifier} from '../../hooks';
-import {CenteredLoader} from '../CenteredLoader';
-
-
-const textFieldStyle: React.CSSProperties = {
-    padding: "0 0 20px 0"
-}
-
-const errorTextStyle: React.CSSProperties = {
-    color: "red",
-    fontStyle: "italic"
-}
-
+import { useNotifier } from '../../hooks';
+import { CenteredLoader } from '../CenteredLoader';
+import styles from "./comment-form.module.scss";
 
 const CommentForm = ({
                          post,
@@ -82,21 +72,16 @@ const CommentForm = ({
                     }}>
                         <FormHeader iconColor={palette.JET} caption={caption} icon={<ModeEditIcon/>}/>
 
-                        <form style={{
-                            width: "100%",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-around"
-                        }} onSubmit={formik.handleSubmit}>
+                        <form className={styles["form"]} onSubmit={formik.handleSubmit}>
 
                             <FormControl>
                                 <FormHelperText>
                                     {formik.touched.content && formik.errors.content &&
-                                        <span style={errorTextStyle}>{formik.errors.content}</span>}
+                                        <span className={styles["form__error"]}>{formik.errors.content}</span>}
                                 </FormHelperText>
 
                                 <TextField multiline
-                                           rows={5} style={textFieldStyle} name="content" label="Comment"
+                                           rows={5} className={styles["form__text-field"]} name="content" label="Comment"
                                            placeholder="Your comment here..."
                                            value={formik.values.content} onChange={formik.handleChange}/>
                             </FormControl>

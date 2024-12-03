@@ -1,12 +1,11 @@
-import axios, {AxiosError, AxiosResponse, HttpStatusCode} from "axios";
-
-import {API_URL, AvatarTokenKeyName, JwtTokenKeyName, UserIdTokenKeyName, UsernameTokenKeyName} from "../../config"
-import {AuthenticateRequest, AuthenticateResponse, RegistrationDto} from "../types"
-import {CursorPagedRequest} from "../types/paging/cursorPaging";
-import {PostDto, PostModel} from "../types/post";
-import {PostReactionDto} from "../types/postReaction";
-import {CommentDto} from "../types/comment";
-import {UserInfoDto, UserModel} from "../types/user";
+import axios, { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
+import { API_URL, AvatarTokenKeyName, JwtTokenKeyName, UserIdTokenKeyName, UsernameTokenKeyName } from "../../config"
+import { AuthenticateRequest, AuthenticateResponse, RegistrationDto } from "../types"
+import { CursorPagedRequest } from "../types/paging/cursorPaging";
+import { PostDto, PostModel } from "../types/post";
+import { PostReactionDto } from "../types/postReaction";
+import { CommentDto } from "../types/comment";
+import { UserInfoDto, UserModel } from "../types/user";
 import { PasskeyListModel } from "../types/authentication/passkey/passkey-info-model";
 
 const IMMEDIATE_LOGOUT_STATUSES = [ HttpStatusCode.Unauthorized, HttpStatusCode.Forbidden ];
