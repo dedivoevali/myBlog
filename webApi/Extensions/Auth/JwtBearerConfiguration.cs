@@ -33,9 +33,12 @@ namespace API.Extensions.Auth
                         OnChallenge = async context =>
                         {
                             context.HandleResponse();
+                            var statusCode = (int)HttpStatusCode.Unauthorized;
+
+                            context.Response.StatusCode = statusCode;
 
                             var error = new ErrorDetails(
-                                statusCode: (int)HttpStatusCode.Unauthorized,
+                                statusCode,
                                 message: "Authentication failed!",
                                 stackTrace: string.Empty
                             );
