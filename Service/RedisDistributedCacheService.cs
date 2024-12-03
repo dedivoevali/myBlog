@@ -23,7 +23,7 @@ public class RedisDistributedCacheService(IDistributedCache distributedCache, IO
     {
         var stringValue = await distributedCache.GetStringAsync(cacheKey, ct);
 
-        return string.IsNullOrWhiteSpace(stringValue) ? default! : stringValue;
+        return string.IsNullOrWhiteSpace(stringValue) ? default! : stringValue.Trim('"');
     }
 
     public async Task RemoveAsync(string cacheKey, CancellationToken ct)
