@@ -17,6 +17,7 @@ import {FilterMenuProps} from './FilterMenuProps';
 import {useSearchParams} from "react-router-dom";
 import {requestFiltersToBrowserQueryString} from "../../shared/assets/requestFiltersToBrowserQueryString";
 import SearchIcon from '@mui/icons-material/Search';
+import styles from "./filter-menu.module.scss";
 
 const FilterMenu = ({availableFilters, width, requestFilters, setFilters}: FilterMenuProps) => {
 
@@ -88,56 +89,52 @@ const FilterMenu = ({availableFilters, width, requestFilters, setFilters}: Filte
 
 
     return (
-        <Paper elevation={12}
-               style={{minWidth: "500px", width: width, margin: "0 auto", minHeight: "50px", padding: "20px"}}>
+        <Paper elevation={12} style={{ width }} className={styles["menu-wrapper"]}>
 
-
-            <Box style={{paddingBottom: "20px"}}>
-                <Typography style={{fontSize: "36px"}}>
+            <Box className={styles["header"]}>
+                <Typography className={styles["header__caption"]}>
                     <SearchIcon fontSize={"large"}/>
                     Search
                 </Typography>
             </Box>
 
-            <Box sx={{padding: "20px", minWidth: "120px", display: "flex", justifyContent: "space-around"}}>
+            <Box className={styles["buttons"]}>
 
-                <Box style={{maxWidth: "20%"}}>
+                <Box className={styles["buttons__dropdown"]}>
                     <InputLabel id="filter-selector">Filter name</InputLabel>
-                    <Select sx={{minWidth: "150px"}} value={filterPathDropdown}
+                    <Select className={styles["buttons__dropdown__selector"]} value={filterPathDropdown}
                             onChange={(e) => setFilterPathDropdown(e.target.value)}>
                         {availableFilters.map((value, index) => <MenuItem value={value} key={index}>{value}</MenuItem>)}
                     </Select>
                 </Box>
 
-                <Box>
+                <Box className={styles["buttons__search"]}>
                     <InputLabel id="filter-value-input">Filter value</InputLabel>
-                    <Input placeholder={"Search..."} value={filterValue} onChange={(e) => {
-                        setFilterValue(e.target.value)
-                    }} type="text" name="filter-value"/>
+                    <Input
+                        fullWidth
+                        placeholder="Search..."
+                        value={filterValue}
+                        onChange={e => setFilterValue(e.target.value)}
+                        type="text"
+                        name="filter-value"/>
                 </Box>
 
                 <Box>
                     <Button disabled={filterPathDropdown.length === 0 || filterValue.length === 0} variant="outlined"
                             onClick={handleAddFilter}>Add filter</Button>
                 </Box>
-
-                <Box style={{minWidth: "150px"}}>
-                    {
-                        requestFilters.filters.length > 1
-                            ?
-                            <>
-                                <InputLabel id="filter-intersection">Search separately</InputLabel>
-                                <FormControlLabel style={{margin: 0, display: "flex", justifyContent: "center"}}
-                                                  control={<Switch checked={doCombineFiltersWithOrOperator}
-                                                                   onChange={handleChangeOfLogicalOperator}/>}
-                                                  label=""/>
-                            </>
-                            :
-                            <></>
-                    }
-                </Box>
-
             </Box>
+
+            {requestFilters.filters.length > 1 &&
+                <Box className={styles["search-separately"]}>
+                    <InputLabel id="filter-intersection">Search separately</InputLabel>
+                    <FormControlLabel
+                        className={styles["search-separately__input"]}
+                        control={<Switch checked={doCombineFiltersWithOrOperator}
+                            onChange={handleChangeOfLogicalOperator} />}
+                        label="" />
+                </Box>
+            }
             <>
                 {requestFilters?.filters.map((filter, index) =>
                     <Chip color="info" key={index} onDelete={() => handleDeleteFilter(filter)} label={
