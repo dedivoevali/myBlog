@@ -35,12 +35,12 @@ const updateUserCacheInBrowserStorage = (cache: UserInfoCache) => {
 
         localStorage.setItem(UserIdTokenKeyName, cache.id.toString());
         localStorage.setItem(UsernameTokenKeyName, cache.username);
-        localStorage.setItem(AvatarTokenKeyName, cache.avatar);
+        localStorage.setItem(AvatarTokenKeyName, cache.avatar || "");
 
     } else {
         sessionStorage.setItem(UserIdTokenKeyName, cache.id.toString());
         sessionStorage.setItem(UsernameTokenKeyName, cache.username);
-        sessionStorage.setItem(AvatarTokenKeyName, cache.avatar)
+        sessionStorage.setItem(AvatarTokenKeyName, cache.avatar || "")
     }
 
 }

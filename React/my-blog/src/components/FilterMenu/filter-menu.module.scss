@@ -1,0 +1,46 @@
+.menu-wrapper {
+    min-width: 500px;
+    margin: 0 auto;
+    min-height: 50px;
+    padding: 20px;
+}
+
+.header {
+    padding-bottom: 20px;
+
+    &__caption {
+        font-size: 36px;
+    }
+}
+
+.buttons {
+    padding: 20px;
+    min-width: 120px;
+    display: flex;
+    justify-content: space-between;
+    
+    &__dropdown {
+        max-width: 20%;
+
+        &__selector {
+            min-width: 150px !important;
+        }
+    }
+
+    &__search {
+        min-width: 60px;
+        width: 20vw;
+
+    }
+}
+
+.search-separately {
+    min-width: 150px;
+    width: 10vw;
+
+    &__input {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+    }
+}
