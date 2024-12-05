@@ -2,7 +2,6 @@
   "name": "my-blog",
   "version": "0.2.0",
   "private": true,
-  "homepage": "https://chioroglo.github.io/myBlog",
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
@@ -33,7 +32,6 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
