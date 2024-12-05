@@ -1,5 +1,6 @@
 import {Alert, AlertColor, Snackbar} from '@mui/material';
 import React from 'react';
+import styles from "./custom-snackbar.module.scss";
 
 interface SnackbarProps {
     isOpen: boolean,
@@ -8,10 +9,9 @@ interface SnackbarProps {
     closeHandler: () => void
 }
 
-
 const CustomSnackbar = ({
                             isOpen = false,
-                            alertMessage = "Snackbar",
+                            alertMessage,
                             alertType,
                             closeHandler
                         }: SnackbarProps) => {
@@ -24,7 +24,7 @@ const CustomSnackbar = ({
 
         <Snackbar transitionDuration={1000} onClose={onClose} open={isOpen} autoHideDuration={3000}
                   message={alertMessage}>
-            <Alert sx={{width: "100%"}} severity={alertType}>{alertMessage}</Alert>
+            <Alert className={styles.alert} severity={alertType}>{alertMessage}</Alert>
         </Snackbar>
     )
 };

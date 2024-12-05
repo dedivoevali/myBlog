@@ -137,7 +137,7 @@ const FilterMenu = ({availableFilters, width, requestFilters, setFilters}: Filte
             }
             <>
                 {requestFilters?.filters.map((filter, index) =>
-                    <Chip color="info" key={index} onDelete={() => handleDeleteFilter(filter)} label={
+                    <Chip color="secondary" key={index} onDelete={() => handleDeleteFilter(filter)} label={
                         <>
                             <span style={{fontWeight: "bold"}}>{filter.path}</span> : {filter.value}
                         </>

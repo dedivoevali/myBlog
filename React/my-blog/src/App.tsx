@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import OnlyForUnauthorized from './guards/OnlyForUnauthorized';
 import { RequireAuth } from './guards';
 import { HomePage, Layout, LoginPage, NotFoundPage, PostPage, ProfilePage, RegisterPage, TopicPage } from './pages';
-import "./App.css";
+import "./App.scss";
 import { UserInfoCache } from "./shared/types";
 import { useSelector } from 'react-redux';
 import { ApplicationState } from './redux';
