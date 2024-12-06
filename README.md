@@ -1,5 +1,5 @@
 # MyBlog
-[![Azure Static Web Apps CI/CD](https://github.com/chioroglo/myBlog/actions/workflows/slave_azure-static-web-apps.yml/badge.svg)](https://github.com/chioroglo/myBlog/actions/workflows/slave_azure-static-web-apps.yml)
+[![Azure Static Web Apps CI/CD](https://github.com/chioroglo/myBlog/actions/workflows/slave_azure-static-web-apps.yml/badge.svg)](https://github.com/chioroglo/myBlog/actions/workflows/slave_azure-static-web-apps.yml)<br/>
 [![api](https://github.com/chioroglo/myBlog/actions/workflows/slave_api-myblog-chioroglo.yml/badge.svg)](https://github.com/chioroglo/myBlog/actions/workflows/slave_api-myblog-chioroglo.yml)<br/>
 [![Coverage Status Backend](https://coveralls.io/repos/github/chioroglo/myBlog/badge.svg?branch=slave)](https://coveralls.io/github/chioroglo/myBlog?branch=slave)<br/>
 # Used Technologies:
