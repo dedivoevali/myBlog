@@ -13,7 +13,13 @@ namespace DAL.Configurations
             builder.ToTable(nameof(Passkey));
 
             builder.Property(p => p.CredentialId)
-                .HasColumnType("VARCHAR")
+                .HasColumnType(Varchar)
+                .HasMaxLength(IndexableVarcharLengthLimit)
+                .IsRequired();
+
+            builder.Property(p => p.AaGuid)
+                .HasComment("Specifies authenticator type (e.g Google Password Manager, iCloud Keychain etc)")
+                .HasColumnType(Varchar)
                 .HasMaxLength(IndexableVarcharLengthLimit)
                 .IsRequired();
 
@@ -26,7 +32,6 @@ namespace DAL.Configurations
                 .HasColumnType(Varchar)
                 .HasMaxLength(IndexableVarcharLengthLimit)
                 .IsRequired();
-
         }
     }
 }
