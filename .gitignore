@@ -13,12 +13,11 @@ webApi/Logs
 Tests
 node_modules
 
-
-
 ###################
 # compiled source #
 ###################
 
+migrationBundle
 *.com
 *.class
 *.dll
