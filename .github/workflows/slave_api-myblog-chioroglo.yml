@@ -40,7 +40,6 @@ jobs:
     runs-on: windows-latest
     needs:
       - build
-    
     steps:
       - uses: actions/checkout@v4
 
@@ -61,10 +60,22 @@ jobs:
           github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
           path-to-lcov: UnitTests/coverage.info
 
-      
+  apply-migrations:
+    runs-on: windows-latest
+    needs:
+      - build
+    steps:
+      - name: Generate Migration Bundle
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet ef migrations bundle --project webApi/API.csproj --output migrationBundle --force
+      - name: Apply Migrations
+        run: ./migrationBundle --connection "${{ secrets.DB_CONNECTION_STRING }}"
+
+
   deploy:
     runs-on: windows-latest
-    needs: build
+    needs: apply-migrations
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}

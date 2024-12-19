@@ -1,0 +1,35 @@
+-- CREATING SQL USER FOR CI/CD PIPELINE MIGRATIONS APPLYING
+GO;
+BEGIN TRAN
+-- create user for server
+	CREATE LOGIN cicdUser WITH PASSWORD = '';
+-- associate login with specific databaes
+	USE [Blog];
+	CREATE USER cicdUser FOR LOGIN cicdUser;
+-- granting DDLpermissions to specific schema
+	GRANT EXECUTE TO cicdUser
+	GRANT ALTER ON SCHEMA::dbo TO cicdUser;
+	GRANT CREATE TABLE TO cicdUser;
+	GRANT CREATE VIEW TO cicdUser;
+	GRANT CREATE PROCEDURE TO cicdUser;
+	GRANT VIEW DEFINITION TO cicdUser;
+ROLLBACK;
+--COMMIT;
+GO;
+
+--  REVOKE PERMISSIONS AND DELETING USER
+GO;
+BEGIN TRAN;
+	USE [Blog];
+	REVOKE SELECT TO cicdUser;
+	REVOKE EXECUTE TO cicdUser;
+	REVOKE ALTER ON SCHEMA::dbo TO cicdUser;
+	REVOKE CREATE TABLE TO cicdUser;
+	REVOKE CREATE VIEW TO cicdUser;
+	REVOKE CREATE PROCEDURE TO cicdUser;
+	REVOKE VIEW DEFINITION TO cicdUser;
+	DROP USER cicdUser;
+	DROP LOGIN cicdUser;
+ROLLBACK;
+--COMMIT;
+GO;
