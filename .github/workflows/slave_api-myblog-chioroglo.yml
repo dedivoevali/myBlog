@@ -68,7 +68,7 @@ jobs:
       - name: Generate Migration Bundle
         run: |
           dotnet tool install --global dotnet-ef
-          cd /home/runner/work/myBlog
+          cd /home/runner/work/myBlog/myBlog
           ls -l
           dotnet ef migrations bundle --project webApi/API.csproj --output migrationBundle --force
       - name: Apply Migrations
