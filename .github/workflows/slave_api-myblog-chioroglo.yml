@@ -61,14 +61,14 @@ jobs:
           path-to-lcov: UnitTests/coverage.info
 
   apply-migrations:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs:
       - build
     steps:
       - name: Generate Migration Bundle
         run: |
           dotnet tool install --global dotnet-ef
-          dir
+          ls -l
           dotnet ef migrations bundle --project ../webApi/API.csproj --output migrationBundle --force
       - name: Apply Migrations
         run: ./migrationBundle --connection "${{ secrets.DB_CONNECTION_STRING }}"
