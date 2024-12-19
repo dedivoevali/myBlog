@@ -23,6 +23,12 @@ namespace DAL
         public DbSet<UserWarning> UserWarnings { get; init; }
         public DbSet<UserBanLog> UserBans { get; init; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseSqlServer();
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

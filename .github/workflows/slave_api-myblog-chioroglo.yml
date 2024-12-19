@@ -78,8 +78,7 @@ jobs:
       - name: Generate Migration Bundle
         run: |
           dotnet tool install --global dotnet-ef
-          ls -l
-          dotnet ef migrations bundle --project webApi/API.csproj --output migrationBundle --force
+          dotnet ef migrations bundle --project Data/DAL.csproj --startup-project webApi/API.csproj --output migrationBundle --force
       - name: Apply Migrations
         run: ./migrationBundle --connection "${{ secrets.DB_CONNECTION_STRING }}"
 
