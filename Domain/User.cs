@@ -10,7 +10,11 @@ namespace Domain
         public string? LastName { get; set; }
         [NotMapped]
         public string Password { get; set; }
+        // TODO: move this to separate table to keep security
         public string PasswordHash { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiresAt { get; set; }
+        // endtodo
         public DateTime LastActivity { get; set; }
         public Avatar Avatar { get; set; }
         public ICollection<Post> Posts { get; set; }

@@ -40,6 +40,13 @@ namespace DAL.Configurations
                 .HasMaxLength(HashedPasswordLengthSha256)
                 .IsRequired();
 
+            builder.Property(e => e.RefreshToken)
+                .HasMaxLength(RefreshTokenLength)
+                .IsRequired(false);
+
+            builder.HasIndex(e => new { e.RefreshToken })
+                .IsUnique();
+
             builder.Property(e => e.LastActivity)
                 .HasDefaultValueSql(GetutcdateSqlExpression)
                 .IsRequired();

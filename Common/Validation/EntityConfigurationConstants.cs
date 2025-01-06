@@ -18,6 +18,7 @@
         public const int UserPasswordMinLength = 6;
         public const int UserPasswordMaxLength = 20;
         public const int HashedPasswordLengthSha256 = 64;
+        public const int RefreshTokenLength = 128;
 
         public const string UserFirstnameAndLastnameRegEx = @"([A-Z][a-z]*)";
 
