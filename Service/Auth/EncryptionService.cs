@@ -22,8 +22,7 @@ namespace Service.Auth
 
         public AuthenticateResponse GenerateAccessToken(int userId, string username)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                _jwtOptions.Key));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
             Claim[] claims =
