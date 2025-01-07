@@ -3,7 +3,7 @@ using static Common.Validation.EntityConfigurationConstants;
 
 namespace Common.Dto.Auth
 {
-    public class AuthenticateRequest
+    public class PasswordAuthorizeRequest
     {
         [Required]
         [MinLength(UsernameMinLength)]
