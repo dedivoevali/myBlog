@@ -72,7 +72,6 @@ namespace API
                         break;
                     }
                 }
-
             });
 
             services.AddAutoMapper(typeof(MappingAssemblyMarker).Assembly);
@@ -100,18 +99,9 @@ namespace API
             }
 
             app.UseExceptionHandler();
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                OnPrepareResponse = (context) =>
-                {
-                    context.Context.Response.Headers.Append("Cache-Control", "no-cache, no-store");
-                    context.Context.Response.Headers.Append("Expires", "-1");
-                }
-            });
 
             app.UseRouting();
             app.UseCors();
-
 
             app.UseAuthentication();
             app.UseAuthorization();
