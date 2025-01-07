@@ -28,7 +28,7 @@ namespace API.Controllers.Auth
         }
 
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> LoginAsync([FromBody] PasswordAuthorizeRequest userData,
             CancellationToken cancellationToken)
         {

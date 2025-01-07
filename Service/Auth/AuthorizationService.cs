@@ -50,6 +50,7 @@ public class AuthorizationService : IAuthorizationService
 
         return new AuthorizationResponse
         {
+            UserId = user.Id,
             AccessToken = accessToken,
             RefreshToken = refreshToken.Value,
             RefreshTokenExpiresAt = refreshToken.ExpiresAt
