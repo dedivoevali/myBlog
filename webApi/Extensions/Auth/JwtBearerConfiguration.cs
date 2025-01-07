@@ -33,15 +33,11 @@ namespace API.Extensions.Auth
                         OnChallenge = async context =>
                         {
                             context.HandleResponse();
-                            var statusCode = (int)HttpStatusCode.Unauthorized;
+                            const int statusCode = (int)HttpStatusCode.Unauthorized;
 
                             context.Response.StatusCode = statusCode;
 
-                            var error = new ErrorDetails(
-                                statusCode,
-                                message: "Authentication failed!",
-                                stackTrace: string.Empty
-                            );
+                            var error = new ErrorDetails(statusCode, "Authentication failed!");
 
                             var json = JsonSerializer.SerializeToUtf8Bytes(error);
                             await context.Response.BodyWriter.WriteAsync(json);
