@@ -21,7 +21,7 @@ const AccountMenuDropdown = ({icon}: { icon: JSX.Element }) => {
 
 
     const deleteUserFromRedux = () => {
-        dispatch({type: ReduxActionTypes.ChangeUser, payload: null});
+        dispatch({type: ReduxActionTypes.DeleteUser });
     }
 
     const handleLogout = () => {

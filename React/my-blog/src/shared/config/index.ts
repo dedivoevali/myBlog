@@ -4,10 +4,6 @@ export const JwtTokenKeyName = "token";
 
 export const UserIdTokenKeyName = "userId"
 
-export const UsernameTokenKeyName = "username"
-
-export const AvatarTokenKeyName = "avatar"
-
 export const DefaultPageSize = 5
 
 export const DefaultAvatarGroupMaxLength = 5

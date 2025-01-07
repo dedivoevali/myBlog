@@ -1,18 +1,33 @@
-import {Avatar, Box, Button, Toolbar, Typography} from '@mui/material';
-import React, {useEffect} from 'react';
-import {useSelector} from 'react-redux';
-import {ApplicationState} from '../../redux';
-import {CustomNavbar} from '../CustomNavbar';
-import {CustomNavLink} from '../CustomNavLink';
-import {Link} from 'react-router-dom';
-import {AccountMenuDropdown} from '../AccountMenuDropdown';
-import {UserInfoCache} from "../../shared/types";
+import { Avatar, Box, Button, Toolbar, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { ApplicationState, CurrentUserState } from '../../redux';
+import { CustomNavbar } from '../CustomNavbar';
+import { CustomNavLink } from '../CustomNavLink';
+import { Link } from 'react-router-dom';
+import { AccountMenuDropdown } from '../AccountMenuDropdown';
 import styles from "./header.module.scss";
+import { UserModel } from '../../shared/api/types/user';
+import { UserApi } from '../../shared/api/http/user-api';
 
 const Header = () => {
-    const user = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
+    const user = useSelector<ApplicationState, (CurrentUserState | undefined | null)>(state => state.user);
+    const [userInfo, setUserInfo] = useState<UserModel>();
+    const [avatarUrl, setAvatarUrl] = useState<string>();
 
-    useEffect(() => {}, [user]);
+    useEffect(() => {
+        setUserInfo(undefined);
+        setAvatarUrl(undefined);
+        if (user) {
+            UserApi.getUserById(user.id).then((response) => {
+                setUserInfo(response.data);
+                UserApi.getAvatarUrlById(user.id).then((response1) => {
+                    let avatarUrl = response1.data;
+                    setAvatarUrl(avatarUrl);
+                });
+            });
+        }
+    }, [user]);
 
     return (
         <CustomNavbar>
@@ -25,9 +40,9 @@ const Header = () => {
                 {
                     user ?
                         <div>
-                            <Typography display={"inline"}>Welcome, {user?.username}!</Typography>
+                            <Typography display={"inline"}>Welcome, {userInfo?.username}!</Typography>
                             <AccountMenuDropdown icon={<Avatar
-                                src={user?.avatar}>{user?.username[0]}</Avatar>}/>
+                                src={avatarUrl}>{userInfo?.initials}</Avatar>}/>
                         </div>
                         :
                         <Button variant="contained" component={Link} to="/login">Login</Button>

@@ -2,19 +2,17 @@ import { AssignmentInd, } from '@mui/icons-material';
 import { Button, Checkbox, FormControl, FormControlLabel, FormHelperText, Input, InputLabel, Paper } from '@mui/material';
 import { useFormik } from 'formik';
 import React, { useEffect, useState } from 'react';
-import { authApi, userApi } from '../../shared/api/http/api';
+import { authApi } from '../../shared/api/http/api';
 import { AuthenticateResponse, ErrorResponse } from '../../shared/api/types';
 import { palette, PasswordValidationConstraints, UsernameValidationConstraints } from '../../shared/assets';
 import { FormHeader } from '../FormHeader';
 import { AuthenticationFormProps } from './AuthenticationFormProps';
 import * as Yup from 'yup';
-import { AxiosError, AxiosResponse } from 'axios';
 import { CenteredLoader } from '../CenteredLoader';
 import { useDispatch } from 'react-redux';
-import { ReduxActionTypes } from '../../redux';
+import { CurrentUserState, ReduxActionTypes } from '../../redux';
 import { Link } from 'react-router-dom';
 import { useNotifier } from '../../hooks';
-import { UserInfoCache } from "../../shared/types";
 import { PasskeyApi } from '../../shared/api/http/passkey-api';
 import { WebauthnService } from '../../shared/services/webauthn-service';
 import { arrayBufferToBase64, arrayBufferToUtf8 } from '../../shared/assets/array-buffer-utils';
@@ -31,11 +29,9 @@ const LoginForm = () => {
 
     const dispatch = useDispatch();
 
-    const setUser = (user: UserInfoCache) => {
+    const setUser = (user: CurrentUserState) => {
         dispatch({type: ReduxActionTypes.ChangeUser, payload: user});
     }
-
-    const fetchAvatarUrl = (userId: number) => userApi.getAvatarUrlById(userId).then((result: AxiosResponse<string>) => result.data);
 
     const [loading, setLoading] = useState(false);
     const displayNotification = useNotifier();
@@ -49,7 +45,6 @@ const LoginForm = () => {
     useEffect(() => {
         passkeyApi.getAuthenticationOptions().then((response) => {
             webauthnService.authenticateCredentialRequest(response, passkeyAbortController).then((resp) => {
-
                 const credential = resp?.credential;
                 const challenge = resp?.challenge;
 
@@ -76,14 +71,13 @@ const LoginForm = () => {
 
                 passkeyApi.authenticate(payload)
                 .then((response: AuthenticateResponse) => {
-                    authApi.setJwtAndPayloadInStorage(response, formik.values.rememberMe);
-                    setUser(new UserInfoCache(response.id, response.username));
+                    authApi.setUserInStorage(response, formik.values.rememberMe);
+                    setUser({ id: response.userId, accessToken: response.accessToken });
                     notifySucessfullAuth();
                 })
                 .catch((err) => displayNotification(err.response.data.Message, "error"));
                 
             }).catch((err) => {
-                console.log(err);
                 // Supress
             });
         }).catch(err => {
@@ -97,20 +91,20 @@ const LoginForm = () => {
         initialValues: {
             username: "",
             password: "",
-            rememberMe: false
+            rememberMe: true
         },
         onSubmit: async (values) => {
             setLoading(true);
-            const result = await authApi.TryAuthenticateAndPayloadInHeaders({...values}, values.rememberMe);
-
-            if (result.status !== 200 && result instanceof AxiosError<ErrorResponse>) {
-                const errorMessage = result.response?.data.Message;
-                displayNotification(errorMessage, "error");
+            const result = await authApi.tryAuthenticate({...values}, values.rememberMe);
+            if (result.status !== 200) {
+                const errorResult = (result as any).response.data as ErrorResponse;
+                displayNotification(errorResult.Message, "error");
             } else {
-                fetchAvatarUrl(result.data.id).then((resultOfAvatarFetching) => {
-                    setUser(new UserInfoCache(result.data.id, result.data.username, resultOfAvatarFetching));
-                    notifySucessfullAuth();
-                })
+                setUser({
+                    id: result.data.userId,
+                    accessToken: result.data.accessToken
+                });
+                notifySucessfullAuth();
             }
             setLoading(false);
         },
@@ -161,7 +155,7 @@ const LoginForm = () => {
                             </FormHelperText>
                         </FormControl>
 
-                        <FormControlLabel name="rememberMe" className={styles.checkbox} onChange={formik.handleChange}
+                        <FormControlLabel name="rememberMe" checked={formik.values.rememberMe} className={styles.checkbox} onChange={formik.handleChange}
                             label="Remember me?" control={<Checkbox />} />
 
                         <Button variant="outlined" className={styles.submit} type="submit">Log in</Button>

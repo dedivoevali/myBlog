@@ -4,13 +4,11 @@ import OnlyForUnauthorized from './guards/OnlyForUnauthorized';
 import { RequireAuth } from './guards';
 import { HomePage, Layout, LoginPage, NotFoundPage, PostPage, ProfilePage, RegisterPage, TopicPage } from './pages';
 import "./App.scss";
-import { UserInfoCache } from "./shared/types";
 import { useSelector } from 'react-redux';
-import { ApplicationState } from './redux';
-
+import { ApplicationState, CurrentUserState } from './redux';
 
 function App() {
-    const user = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
+    const user = useSelector<ApplicationState, (CurrentUserState | undefined | null)>(state => state.user);
     const userId = user ? user.id : 0;
 
     return (

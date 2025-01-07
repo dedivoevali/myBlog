@@ -2,22 +2,22 @@ import React, {useEffect, useState} from 'react';
 import {CommentCardProps} from "./CommentCardProps";
 import {transformUtcStringToDateMonthHoursMinutesString} from "../../shared/assets";
 import {Avatar, Box, Card, CardContent, CardHeader, IconButton, Menu, MenuItem, Typography} from '@mui/material';
-import {commentApi, userApi} from "../../shared/api/http/api";
+import { commentApi } from "../../shared/api/http/api";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {PostMentioningInline} from "../PostMentioningInline";
 import {UserMentioningInline} from "../UserMentioningInline";
 import {useSelector} from "react-redux";
-import {ApplicationState} from '../../redux';
+import {ApplicationState, CurrentUserState} from '../../redux';
 import {CommentDto, CommentModel} from '../../shared/api/types/comment';
 import {AxiosResponse} from 'axios';
 import {ConfirmActionCustomModal} from "../CustomModal";
 import {CommentForm} from "../CommentForm";
-import {UserInfoCache} from "../../shared/types";
+import { UserApi } from '../../shared/api/http/user-api';
 
 const CommentCard = ({width = "100%", initialComment, disappearCommentCallback, post}: CommentCardProps) => {
 
     const [comment, setComment] = useState<CommentModel>(initialComment);
-    const user = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
+    const user = useSelector<ApplicationState, (CurrentUserState | undefined | null)>(state => state.user);
     const [avatarLink, setAvatarLink] = useState("");
     const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState<boolean>(false);
     const [editPostModeEnabled, setEditPostMode] = useState<boolean>(false);
@@ -55,7 +55,7 @@ const CommentCard = ({width = "100%", initialComment, disappearCommentCallback, 
         })
     }
 
-    const fetchAvatarUrl = (userId: number) => userApi.getAvatarUrlById(userId).then(response => setAvatarLink(response.data));
+    const fetchAvatarUrl = (userId: number) => UserApi.getAvatarUrlById(userId).then(response => setAvatarLink(response.data));
 
     useEffect(() => {
         fetchAvatarUrl(comment.authorId);

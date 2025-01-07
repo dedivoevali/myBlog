@@ -1,12 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {Provider} from 'react-redux';
-import {BrowserRouter} from 'react-router-dom';
-import {createStore} from 'redux';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+import { createStore } from 'redux';
 import App from './App';
-import {ApplicationState, CustomNotificationPayload, ReduxActionTypes} from './redux';
-import {AvatarTokenKeyName, JwtTokenKeyName, UserIdTokenKeyName, UsernameTokenKeyName, applicationTheme} from './shared/config';
-import {UserInfoCache} from "./shared/types";
+import { ApplicationState, CurrentUserState, CustomNotificationPayload, ReduxActionTypes } from './redux';
+import { JwtTokenKeyName, UserIdTokenKeyName, applicationTheme } from './shared/config';
 import { ThemeProvider } from '@emotion/react';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -17,32 +16,23 @@ const root = ReactDOM.createRoot(
 
 const storageContainsPayload = (): boolean => localStorage.getItem(JwtTokenKeyName) !== null || sessionStorage.getItem(JwtTokenKeyName) !== null;
 
-const fetchUserInfoFromStorage = (): (UserInfoCache | null) => {
+const fetchUserInfoFromStorage = (): (CurrentUserState | null) => {
     if (storageContainsPayload()) {
         return {
             id: parseInt(localStorage.getItem(UserIdTokenKeyName) || sessionStorage.getItem(UserIdTokenKeyName) || "0"),
-            username: localStorage.getItem(UsernameTokenKeyName) || sessionStorage.getItem(UsernameTokenKeyName) || "",
-            avatar: localStorage.getItem(AvatarTokenKeyName) || sessionStorage.getItem(AvatarTokenKeyName) || ""
-        }
+            accessToken: localStorage.getItem(JwtTokenKeyName) || sessionStorage.getItem(JwtTokenKeyName) || "" 
+        };
     } else {
         return null;
     }
 }
 
-const updateUserCacheInBrowserStorage = (cache: UserInfoCache) => {
-
+const updateUserCacheInBrowserStorage = (cache: CurrentUserState) => {
     if (localStorage.getItem(JwtTokenKeyName)) {
-
         localStorage.setItem(UserIdTokenKeyName, cache.id.toString());
-        localStorage.setItem(UsernameTokenKeyName, cache.username);
-        localStorage.setItem(AvatarTokenKeyName, cache.avatar || "");
-
     } else {
         sessionStorage.setItem(UserIdTokenKeyName, cache.id.toString());
-        sessionStorage.setItem(UsernameTokenKeyName, cache.username);
-        sessionStorage.setItem(AvatarTokenKeyName, cache.avatar || "")
     }
-
 }
 
 const defaultState: ApplicationState = {
@@ -52,7 +42,7 @@ const defaultState: ApplicationState = {
     user: fetchUserInfoFromStorage()
 }
 
-const reducer = (state = defaultState, action: { type: string, payload: boolean | CustomNotificationPayload | UserInfoCache }) => {
+const reducer = (state = defaultState, action: { type: string, payload: boolean | CustomNotificationPayload | CurrentUserState }) => {
     switch (action.type) {
 
         case ReduxActionTypes.ChangeNotification: {
@@ -65,23 +55,19 @@ const reducer = (state = defaultState, action: { type: string, payload: boolean 
             }
             return state;
         }
-
         case ReduxActionTypes.DisplayNotification: {
             if (typeof action.payload === "boolean") {
                 return {...state, isCurrentlyNotifying: action.payload}
             }
             return state;
         }
-
+        case ReduxActionTypes.DeleteUser: {
+            return { ...state, user: null, isAuthorized: false }
+        }
         case ReduxActionTypes.ChangeUser: {
-            if (action.payload instanceof UserInfoCache) {
-
-                updateUserCacheInBrowserStorage(action.payload);
-                return {...state, user: action.payload, isAuthorized: true}
-            } else if (action.payload === null) {
-                return {...state, user: null, isAuthorized: false}
-            }
-            return state;
+            let payload = action.payload as CurrentUserState;
+            updateUserCacheInBrowserStorage(payload);
+            return {...state, user: action.payload, isAuthorized: true}
         }
         default:
             return state

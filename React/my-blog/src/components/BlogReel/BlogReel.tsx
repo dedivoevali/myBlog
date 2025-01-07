@@ -1,7 +1,7 @@
 import {Box, Button, IconButton, Typography} from '@mui/material';
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {ApplicationState} from '../../redux';
+import {ApplicationState, CurrentUserState} from '../../redux';
 import {postApi} from '../../shared/api/http/api';
 import {
     CursorPagedRequest,
@@ -18,7 +18,6 @@ import {FilterMenu} from '../FilterMenu';
 import {DefaultPageSize} from '../../shared/config';
 import {PostForm} from "../PostForm";
 import {EmptyReelPlate} from "../EmptyReelPlate";
-import {UserInfoCache} from "../../shared/types";
 import {CenteredLoader} from "../CenteredLoader";
 import DancingBananaGif from "../../assets/banana.gif";
 
@@ -38,7 +37,7 @@ const BlogReel = ({
                       showAddPostForm = false
                   }: BlogReelProps) => {
 
-    const user = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
+    const user = useSelector<ApplicationState, CurrentUserState | undefined | null>(state => state.user);
 
     const [formVisible, setFormVisible] = useState<boolean>(showAddPostForm);
     const [isLoading, setLoading] = useState<boolean>(true);
@@ -95,11 +94,8 @@ const BlogReel = ({
     const handleNewPost = async (post: PostDto): Promise<AxiosResponse<PostModel>> => {
         return postApi.addPost(post).then((result: AxiosResponse<PostModel>) => {
             if (result.status === 200 && user) {
-                result.data.authorUsername = user?.username;
-                result.data.authorId = user?.id;
                 setPosts([result.data, ...posts]);
             }
-
             return result;
         }).catch((result) => result);
     }

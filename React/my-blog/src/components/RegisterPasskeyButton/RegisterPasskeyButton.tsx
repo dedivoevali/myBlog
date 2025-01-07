@@ -1,8 +1,7 @@
 import { Button } from "@mui/material"
 import { PasskeyApi } from "../../shared/api/http/passkey-api";
 import { WebauthnService } from "../../shared/services/webauthn-service";
-import { UserInfoCache } from "../../shared/types";
-import { ApplicationState } from "../../redux";
+import { ApplicationState, CurrentUserState } from "../../redux";
 import { useSelector } from "react-redux";
 import { RegisterPasskeyButtonProps } from "./RegisterPasskeyButtonProps";
 import { VpnKeySharp } from "@mui/icons-material";
@@ -16,7 +15,7 @@ const RegisterPasskeyButton = ({ caption, onSuccess }: RegisterPasskeyButtonProp
 
     const passkeyApi = PasskeyApi.create();
     const webauthnService = new WebauthnService(navigator, window);
-    const user = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
+    const user = useSelector<ApplicationState, (CurrentUserState | undefined | null)>(state => state.user);
     const notifyUser = useNotifier();
     const [loading, setLoading] = useState(false);
     const onClick = () => {
@@ -37,7 +36,6 @@ const RegisterPasskeyButton = ({ caption, onSuccess }: RegisterPasskeyButtonProp
                 })
                 .catch((result) => notifyUser(result.response?.data.Message, "error"));
             }).catch((err) => {
-                console.log(err);
                 notifyUser("Passkey authentication aborted", "info");
             }).finally(() => {
                 setLoading(false);
