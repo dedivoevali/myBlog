@@ -28,4 +28,14 @@ public class UserRepository : BaseRepository<User>, IUserRepository
     {
         return await _db.Users.AnyAsync(u => u.Username == username, ct);
     }
+
+    public async Task<User?> GetUserByCredentials(string username, string passwordHash, CancellationToken ct = default)
+    {
+        return await _db.Users.FirstOrDefaultAsync(u => u.Username == username && u.PasswordHash == passwordHash, ct);
+    }
+
+    public async Task<User?> GetUserByActiveRefreshToken(string refreshToken, CancellationToken ct = default)
+    {
+        return await _db.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken && u.RefreshTokenExpiresAt > DateTime.UtcNow, ct);
+    }
 }

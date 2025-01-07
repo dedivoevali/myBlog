@@ -1,5 +1,5 @@
 ﻿using System.Security.Authentication;
-using Service.Auth;
+using Service.Abstract.Auth;
 
 namespace API.Middlewares;
 
