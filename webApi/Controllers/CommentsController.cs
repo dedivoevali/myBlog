@@ -56,6 +56,7 @@ namespace API.Controllers
             commentEntity.UserId = CurrentUserId;
 
             var newlyCreatedComment = await _commentsService.Add(commentEntity, cancellationToken);
+            newlyCreatedComment = await _commentsService.GetByIdWithIncludeAsync(newlyCreatedComment.Id, cancellationToken, e => e.User);
 
             return _mapper.Map<CommentModel>(newlyCreatedComment);
         }

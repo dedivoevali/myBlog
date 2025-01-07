@@ -4,6 +4,7 @@ using DAL.Repositories.Abstract;
 using Domain;
 using Service.Abstract;
 using System.Linq.Expressions;
+using Domain.Abstract;
 using Domain.Messaging;
 using Service.Abstract.Messaging;
 
@@ -13,13 +14,16 @@ namespace Service
     {
         private readonly IPostRepository _postRepository;
         private readonly IMessageBus _bus;
+        private readonly IUnitOfWork _unitOfWork;
 
         public PostService(
             IPostRepository postRepository,
-            IMessageBus bus)
+            IMessageBus bus,
+            IUnitOfWork unitOfWork)
         {
             _postRepository = postRepository;
             _bus = bus;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Post> Add(Post request, CancellationToken cancellationToken)
@@ -29,7 +33,8 @@ namespace Service
                 throw new ValidationException($"Title {request.Title} is occupied");
             }
 
-            var post = await _postRepository.AddAsync(request, cancellationToken);
+            var post = await _postRepository.AddAsync(request, saveChanges: false, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
 
             await _bus.Publish(new AnalyzePostMessage(post.Id), ct: cancellationToken);
 
