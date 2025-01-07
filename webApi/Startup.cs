@@ -82,6 +82,7 @@ namespace API
             services.InitializeControllers();
             services.InitializePasskeyFido2CryptoLibrary();
             services.AddScoped<BannedUserMiddleware>();
+            services.AddScoped<JwtAccessTokenBlacklistMiddleware>();
             services.AddProblemDetails();
             services.AddExceptionHandler<GlobalExceptionHandlingMiddleware>();
             services.AddFeatureManagement();
@@ -106,6 +107,7 @@ namespace API
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<BannedUserMiddleware>();
+            app.UseMiddleware<JwtAccessTokenBlacklistMiddleware>();
             //app.UseDatabaseTransactions(); TODO: Bring back after DB transaction will be fixed
 
 
