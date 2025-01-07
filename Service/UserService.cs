@@ -66,15 +66,6 @@ namespace Service
             return await _userRepository.Update(user, cancellationToken);
         }
 
-        public async Task<User> GetByUsernameAsync(string username, CancellationToken cancellationToken)
-        {
-            var usernameFound = await _userRepository.GetWhereAsync(e => e.Username == username, cancellationToken);
-
-            return usernameFound.FirstOrDefault() ??
-                   throw new ValidationException($"{nameof(User)} with name {username} was not found!");
-        }
-
-
         public async Task<User> GetByIdWithIncludeAsync(int id, CancellationToken cancellationToken,
             params Expression<Func<User, object>>[] includeProperties)
         {

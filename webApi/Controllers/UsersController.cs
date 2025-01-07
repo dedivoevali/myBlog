@@ -33,15 +33,6 @@ namespace API.Controllers
             return _mapper.Map<UserModel>(user);
         }
 
-        [AllowAnonymous]
-        [HttpGet("username/{username}")]
-        public async Task<UserModel> GetByUsernameAsync(string username, CancellationToken cancellationToken)
-        {
-            var user = await _userService.GetByUsernameAsync(username, cancellationToken);
-
-            return _mapper.Map<UserModel>(user);
-        }
-
         [HttpGet("current")]
         public async Task<UserModel> GetAuthenticatedUserAsync(CancellationToken cancellationToken)
         {
@@ -49,7 +40,6 @@ namespace API.Controllers
 
             return _mapper.Map<UserModel>(user);
         }
-
 
         [HttpPatch]
         [UpdatesUserActivity]
