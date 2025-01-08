@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Avatar, AvatarGroup, Box, ClickAwayListener, IconButton, Popper, Typography} from "@mui/material";
 import {useSelector} from "react-redux";
-import {ApplicationState} from "../../redux";
+import {ApplicationState, CurrentUserState} from "../../redux";
 import {PostReactionModel} from "../../shared/api/types/postReaction";
 import {PostReactionBoxProps} from "./PostReactionBoxProps";
-import {postReactionApi, userApi} from "../../shared/api/http/api";
+import { postReactionApi } from "../../shared/api/http/api";
 import {AxiosResponse} from "axios";
 import {ReactionType} from "../../shared/api/types";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -16,11 +16,11 @@ import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import AuthorizationRequiredCustomModal
     from "../CustomModal/AuthorizationRequiredCustomModal/AuthorizationRequiredCustomModal";
 import {DefaultAvatarGroupMaxLength} from "../../shared/config";
-import {UserInfoCache} from "../../shared/types";
+import { UserApi } from '../../shared/api/http/user-api';
 
 const PostReactionBox = ({postId}: PostReactionBoxProps) => {
 
-    const user = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
+    const user = useSelector<ApplicationState, (CurrentUserState | undefined | null)>(state => state.user);
     const [reactions, setReactions] = useState<PostReactionModel[]>([]);
     const [userReaction, setUserReaction] = useState<{ exists: boolean, type?: ReactionType }>({exists: false});
     const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -113,7 +113,7 @@ const PostReactionBox = ({postId}: PostReactionBoxProps) => {
         <IconButton onClick={() => handleRemoveReaction()} children={<FavoriteIcon color={"error"}/>}/>
     ]
 
-    const fetchAvatarUrl = (userId: number) => userApi.getAvatarUrlById(userId).then((result: AxiosResponse<string>) => result.data);
+    const fetchAvatarUrl = (userId: number) => UserApi.getAvatarUrlById(userId).then((result: AxiosResponse<string>) => result.data);
 
 
     useEffect(() => {
@@ -149,8 +149,7 @@ const PostReactionBox = ({postId}: PostReactionBoxProps) => {
 
     return (
         <>
-            <AuthorizationRequiredCustomModal modalOpen={modalOpen} setModalOpen={setModalOpen}
-                                              caption={"Please sign up to share your thoughts"}/>
+            <AuthorizationRequiredCustomModal modalOpen={modalOpen} setModalOpen={setModalOpen} caption={"Please sign up to share your thoughts"}/>
 
             {
                 !isReactionsLoading

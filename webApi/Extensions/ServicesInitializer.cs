@@ -20,7 +20,8 @@ namespace API.Extensions
         public static void InitializeServices(this IServiceCollection services)
         {
             services.AddScoped<IMessageBus, MassTransitMessageBus>();
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IPasswordAuthService, PasswordAuthService>();
+            services.AddScoped<IAuthorizationService, AuthorizationService>();
             services.AddScoped<IEncryptionService, EncryptionService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IPostService, PostService>();

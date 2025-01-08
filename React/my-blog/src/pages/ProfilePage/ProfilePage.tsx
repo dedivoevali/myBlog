@@ -7,20 +7,19 @@ import {CommentReel} from '../../components/CommentReel';
 import {CustomTabPanel} from '../../components/CustomTabPanel';
 import {ProfileHeader} from '../../components/ProfileHeader';
 import {CenteredLoader} from '../../components/CenteredLoader';
-import {ApplicationState} from '../../redux';
-import {userApi} from '../../shared/api/http/api';
+import {ApplicationState, CurrentUserState} from '../../redux';
 import {FilterLogicalOperator} from '../../shared/api/types/paging';
 import {CursorPagedRequest} from '../../shared/api/types/paging/cursorPaging';
 import {UserModel} from '../../shared/api/types/user';
 import {DefaultPageSize} from '../../shared/config';
-import {UserInfoCache} from "../../shared/types";
 import {AxiosError, AxiosResponse} from "axios";
 import {ErrorResponse} from "../../shared/api/types";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { UserApi } from '../../shared/api/http/user-api';
 
 const ProfilePage = () => {
 
-    const isAuthorized = useSelector<ApplicationState, UserInfoCache | null>(state => state.user);
+    const isAuthorized = useSelector<ApplicationState, CurrentUserState | undefined | null>(state => state.user);
 
     const [isLoading, setLoading] = useState<boolean>(true);
     const {userId} = useParams();
@@ -33,7 +32,7 @@ const ProfilePage = () => {
     const [hasError, setHasError] = useState<boolean>(false);
     const [errorText, setErrorText] = useState<string>("Error occurred");
 
-    const fetchUser = () => userApi.getUserById(parseInt(userId || "0")).then(response => {
+    const fetchUser = () => UserApi.getUserById(parseInt(userId || "0")).then(response => {
         return response;
     });
 

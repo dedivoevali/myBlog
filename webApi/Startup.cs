@@ -72,7 +72,6 @@ namespace API
                         break;
                     }
                 }
-
             });
 
             services.AddAutoMapper(typeof(MappingAssemblyMarker).Assembly);
@@ -83,6 +82,7 @@ namespace API
             services.InitializeControllers();
             services.InitializePasskeyFido2CryptoLibrary();
             services.AddScoped<BannedUserMiddleware>();
+            services.AddScoped<JwtAccessTokenBlacklistMiddleware>();
             services.AddProblemDetails();
             services.AddExceptionHandler<GlobalExceptionHandlingMiddleware>();
             services.AddFeatureManagement();
@@ -93,6 +93,7 @@ namespace API
         {
             // Configure the HTTP request pipeline.
 
+            app.UseHttpsRedirection();
             if (env.IsDevelopment())
             {
                 app.UseSwagger();
@@ -100,22 +101,13 @@ namespace API
             }
 
             app.UseExceptionHandler();
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                OnPrepareResponse = (context) =>
-                {
-                    context.Context.Response.Headers.Append("Cache-Control", "no-cache, no-store");
-                    context.Context.Response.Headers.Append("Expires", "-1");
-                }
-            });
-
             app.UseRouting();
             app.UseCors();
-
 
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<BannedUserMiddleware>();
+            app.UseMiddleware<JwtAccessTokenBlacklistMiddleware>();
             //app.UseDatabaseTransactions(); TODO: Bring back after DB transaction will be fixed
 
 

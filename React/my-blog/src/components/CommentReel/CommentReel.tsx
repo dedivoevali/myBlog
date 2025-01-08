@@ -8,12 +8,11 @@ import {Box, Button, CircularProgress, IconButton, Typography} from '@mui/materi
 import {CommentCard} from "../CommentCard";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import {useSelector} from 'react-redux';
-import {ApplicationState} from "../../redux";
+import {ApplicationState, CurrentUserState} from "../../redux";
 import {CommentForm} from "../CommentForm";
 import {EmptyReelPlate} from '../EmptyReelPlate';
 import {FilterLogicalOperator} from "../../shared/api/types/paging";
 import {DefaultPageSize} from "../../shared/config";
-import {UserInfoCache} from "../../shared/types";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import {Waypoint} from "react-waypoint";
 import {CenteredLoader} from "../CenteredLoader";
@@ -34,7 +33,7 @@ const CommentReel = ({
                      }: CommentReelProps) => {
 
 
-    const user = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
+    const user = useSelector<ApplicationState, (CurrentUserState | undefined | null)>(state => state.user);
 
     const [comments, setComments] = useState<CommentModel[]>([]);
     const [isLoading, setLoading] = useState<boolean>(true);
@@ -83,13 +82,6 @@ const CommentReel = ({
         setLoading(true);
         return commentApi.addComment(comment).then((result: AxiosResponse<CommentModel>) => {
             if (result.status === 200 && user) {
-                result.data.authorUsername = user?.username;
-                result.data.authorId = user?.id;
-
-                if (post) {
-                    result.data.postTitle = post.title;
-                }
-
                 setComments([result.data, ...comments]);
             }
             setLoading(false);

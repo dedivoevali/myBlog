@@ -22,42 +22,22 @@ import {
 } from "../../../shared/assets";
 import { FormHeader } from '../../FormHeader';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import { avatarApi, userApi } from '../../../shared/api/http/api';
+import { avatarApi } from '../../../shared/api/http/api';
 import { AxiosError, AxiosResponse } from "axios";
 import { useNotifier } from '../../../hooks';
 import { ErrorResponse } from "../../../shared/api/types";
 import UploadFileRoundedIcon from '@mui/icons-material/UploadFileRounded';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
-import { ApplicationState, ReduxActionTypes } from '../../../redux';
-import { useDispatch, useSelector } from 'react-redux';
-import { UserInfoCache } from '../../../shared/types';
 import { MaxAvatarSizeBytes } from "../../../shared/config";
 import styles from './edit-profile-custom-modal.module.scss';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { RegisterPasskeyButton } from '../../RegisterPasskeyButton';
 import { PasskeyList } from '../../PasskeyList/PasskeyList';
+import { UserApi } from '../../../shared/api/http/user-api';
 
 const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditProfileCustomModalProps) => {
 
-    const reduxUser = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
-
-    const dispatch = useDispatch();
-
-    const setReduxUserInfo = (userInfo: UserModel) => {
-        const cache = new UserInfoCache(userInfo.id, userInfo.username, reduxUser?.avatar || "");
-        dispatch({type: ReduxActionTypes.ChangeUser, payload: cache})
-    }
-
-    const setReduxAvatar = (avatar: string) => {
-        if (reduxUser) {
-            const cache = new UserInfoCache(reduxUser.id, reduxUser.username, avatar);
-
-            dispatch({type: ReduxActionTypes.ChangeUser, payload: cache});
-        }
-    }
-
     const notifyUser = useNotifier();
-
     const formik = useFormik<UserInfoDto>({
         initialValues: {
             username: user.username,
@@ -75,16 +55,13 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
                 values.lastName = undefined;
             }
 
-
-            userApi.editProfileOfAuthorizedUser(values).then((response) => {
+            UserApi.editProfileOfAuthorizedUser(values).then((response) => {
                 setUser({
                     ...response.data,
                     lastActivity: new Date().toUTCString(),
                     fullName: `${values.firstName} ${values.lastName}`,
                     username: values.username || user.username
                 });
-
-                setReduxUserInfo({...response.data});
 
                 notifyUser("User information was successfully updated", "success")
                 setModalOpen(false);
@@ -113,15 +90,13 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
         })
     });
 
-    const fetchAvatarUrl = (userId: number) => userApi.getAvatarUrlById(userId).then((result: AxiosResponse<string>) => result.data);
+    const fetchAvatarUrl = (userId: number) => UserApi.getAvatarUrlById(userId).then((result: AxiosResponse<string>) => result.data);
 
     const [avatarPreview, setAvatarPreview] = useState<string>("");
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [passkeyListUpdateTrigger, setPasskeyListUpdateTrigger] = useState<number>(0);
 
     const handleFile = (e: ChangeEvent<HTMLInputElement>) => {
-
-
         if (e.target.files) {
             let file: File = e.target.files[0];
 
@@ -140,7 +115,6 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
         if (avatarFile) {
             avatarApi.UploadNewAvatarForAuthorizedUser(avatarFile).then((response) => {
                 notifyUser("Avatar was successfully loaded", "success");
-                setReduxAvatar(response.data);
             }).catch((error: AxiosError<ErrorResponse>) => {
                 notifyUser(error.response?.data.Message || "Error occurred while uploading avatar", "error");
             });
@@ -154,7 +128,6 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
         avatarApi.RemoveAvatarForAuthorizedUser().then(() => {
             notifyUser("Avatar was successfully removed", "success");
             setAvatarPreview("");
-            setReduxAvatar("");
         }).catch((result: AxiosError<ErrorResponse>) => {
             notifyUser(result.response?.data.Message || "Unknown error", "error");
         });

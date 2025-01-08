@@ -16,7 +16,7 @@ public class GlobalExceptionHandlingMiddleware(
             NotFoundException => (int)HttpStatusCode.NotFound,
             ValidationException or InsufficientPermissionsException => (int)HttpStatusCode.BadRequest,
             AuthenticationException => (int)HttpStatusCode.Unauthorized,
-            UserBannedException => (int)HttpStatusCode.Forbidden,
+            UserBannedException or AccessDeniedException => (int)HttpStatusCode.Forbidden,
             TaskCanceledException or OperationCanceledException => default,
             _ => (int)HttpStatusCode.InternalServerError
         };

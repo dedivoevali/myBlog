@@ -4,7 +4,7 @@ namespace API.Middlewares.Models
 {
     public class ErrorDetails
     {
-        public ErrorDetails(int statusCode, string message, string stackTrace)
+        public ErrorDetails(int statusCode, string message, string stackTrace = "")
         {
             StatusCode = statusCode;
             Message = message;

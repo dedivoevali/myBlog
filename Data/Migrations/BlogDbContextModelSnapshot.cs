@@ -237,6 +237,13 @@ namespace DAL.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
+                    b.Property<string>("RefreshToken")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime?>("RefreshTokenExpiresAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("RegistrationDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -248,6 +255,10 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RefreshToken")
+                        .IsUnique()
+                        .HasFilter("[RefreshToken] IS NOT NULL");
 
                     b.HasIndex("Id", "Username")
                         .IsUnique();

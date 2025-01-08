@@ -1,20 +1,19 @@
 import axios, { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
-import { API_URL, AvatarTokenKeyName, JwtTokenKeyName, UserIdTokenKeyName, UsernameTokenKeyName } from "../../config"
+import { API_URL, JwtTokenKeyName, UserIdTokenKeyName } from "../../config"
 import { AuthenticateRequest, AuthenticateResponse, RegistrationDto } from "../types"
 import { CursorPagedRequest } from "../types/paging/cursorPaging";
 import { PostDto, PostModel } from "../types/post";
 import { PostReactionDto } from "../types/postReaction";
 import { CommentDto } from "../types/comment";
-import { UserInfoDto, UserModel } from "../types/user";
-import { PasskeyListModel } from "../types/authentication/passkey/passkey-info-model";
 
 const IMMEDIATE_LOGOUT_STATUSES = [ HttpStatusCode.Unauthorized, HttpStatusCode.Forbidden ];
 
 export const instance = axios.create({
-    withCredentials: false,
+    withCredentials: true,
     baseURL: API_URL
 });
 
+// JWT access token in headers request interceptor
 instance.interceptors.request.use((config) => {
 
     if (config && config.headers)
@@ -24,6 +23,30 @@ instance.interceptors.request.use((config) => {
 
     return config;
 })
+
+// JWT refresh token if a 401 Unauthorized response was returned interceptor
+instance.interceptors.response.use((response) => {
+    return Promise.resolve(response);
+}, async (error) => {
+    const err = error as AxiosError;
+
+    if (err.response?.status !== 401) {
+        return Promise.reject(err);
+    }
+
+    const currentUserId = sessionStorage.getItem(UserIdTokenKeyName) || localStorage.getItem(UserIdTokenKeyName) || "";
+    const newAccessToken = await instance.get<AuthenticateResponse>(`/auth/refresh-access-token?targetUserId=${currentUserId}`)
+
+    const storage: Storage = sessionStorage.getItem(UserIdTokenKeyName) ? sessionStorage : localStorage;
+
+    storage.setItem(JwtTokenKeyName, newAccessToken.data.accessToken);
+
+    if (error.response?.config.headers) {
+        error.response.config.headers["Authorization"] = `Bearer ${newAccessToken.data.accessToken}`;
+        return axios(error.response.config);
+    }
+    return Promise.reject(err);
+});
 
 instance.interceptors.response.use((response) => response,
 (err) => {
@@ -53,50 +76,28 @@ export class avatarApi {
     }
 }
 
-export class userApi {
-    static getAvatarUrlById(userId: number) {
-        return instance.get(`/avatars/${userId}`, {
-            validateStatus: (status) => [HttpStatusCode.Ok, HttpStatusCode.NotFound].includes(status)
-        });
-    }
-
-    static getUserById(userId: number) {
-        return instance.get(`/users/${userId}`)
-    }
-
-    static editProfileOfAuthorizedUser(dto: UserInfoDto): Promise<AxiosResponse<UserModel>> {
-        return instance.patch(`/users/`, dto);
-    }
-
-    static getPasskeysInfoByCurrentUserId(): Promise<AxiosResponse<PasskeyListModel>> {
-        return instance.get(`/users/current/passkeys`);
-    }
-}
-
 export class authApi {
 
     static async getCurrent() {
         return await instance.get(`/users/current`);
     }
 
-    static logout(): void {
-
-        const claimNames = [JwtTokenKeyName, UserIdTokenKeyName, UsernameTokenKeyName, AvatarTokenKeyName];
-
-        claimNames.forEach(claim => {
-            localStorage.removeItem(claim);
-            sessionStorage.removeItem(claim);
+    static logout(): Promise<void> {
+        const claimNames = [JwtTokenKeyName, UserIdTokenKeyName];
+        return instance.post(`auth/logout`).then((_) => {
+            claimNames.forEach(claim => {
+                localStorage.removeItem(claim);
+                sessionStorage.removeItem(claim);
+            });
         });
     }
 
-    static TryAuthenticateAndPayloadInHeaders(credentials: AuthenticateRequest, useLocalStorage: boolean) {
-        return instance.post(`/login`, credentials).then((response: AxiosResponse<AuthenticateResponse>) => {
+    static tryAuthenticate(credentials: AuthenticateRequest, useLocalStorage: boolean): Promise<AxiosResponse<AuthenticateResponse>> {
+        return instance.post(`auth/login`, credentials).then((response: AxiosResponse<AuthenticateResponse>) => {
             const payload = response.data;
-
-            this.setJwtAndPayloadInStorage(payload, useLocalStorage);
-
+            this.setUserInStorage(payload, useLocalStorage);
             return response;
-        }).catch((reason) => reason);
+        }).catch(reason => reason);
     }
 
     static TryRegister(dto: RegistrationDto) {
@@ -116,21 +117,10 @@ export class authApi {
             .catch((reason) => reason as AxiosError);
     }
 
-    public static setJwtAndPayloadInStorage(payload: AuthenticateResponse, useLocalStorage: boolean): void {
-
+    public static setUserInStorage(payload: AuthenticateResponse, useLocalStorage: boolean): void {
         let storage: Storage = useLocalStorage ? localStorage : sessionStorage;
-
-        this.fetchAvatarUrlAndSetInStorage(payload.id, storage).then(() => {
-            storage.setItem(JwtTokenKeyName, payload.token);
-            storage.setItem(UserIdTokenKeyName, payload.id.toString());
-            storage.setItem(UsernameTokenKeyName, payload.username);
-        });
-    }
-
-    private static fetchAvatarUrlAndSetInStorage(userId: number, storage: Storage) {
-        return userApi.getAvatarUrlById(userId).then((result: AxiosResponse<string>) => {
-            storage.setItem(AvatarTokenKeyName, result.data);
-        });
+        storage.setItem(JwtTokenKeyName, payload.accessToken);
+        storage.setItem(UserIdTokenKeyName, payload.userId.toString());
     }
 }
 

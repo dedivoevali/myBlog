@@ -48,10 +48,4 @@
 		<ProjectReference Include="..\Domain\Domain.csproj" />
 		<ProjectReference Include="..\Service\Service.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Middlewares\Models\" />
-		<Folder Include="wwwroot\data\" />
-	</ItemGroup>
-
 </Project>

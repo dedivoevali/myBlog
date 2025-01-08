@@ -12,7 +12,7 @@ public class PasskeyAuthService(
     IPasskeyCryptographyService passkeyCryptographyService,
     IPasskeyRepository passkeyRepository,
     IPasskeySessionsService passkeySessionsService,
-    IEncryptionService encryptionService) : IPasskeyAuthService
+    IAuthorizationService authorizationService) : IPasskeyAuthService
 {
     public async Task<PasskeyRegistrationOptionsModel> GetOrCreateRegistrationSession(int userId, CancellationToken ct)
     {
@@ -60,7 +60,7 @@ public class PasskeyAuthService(
         return session;
     }
 
-    public async Task<AuthenticateResponse> Authenticate(AuthenticatePasskeyRequest request, CancellationToken ct)
+    public async Task<AuthorizationResponse> Authenticate(AuthenticatePasskeyRequest request, CancellationToken ct)
     {
         var authenticationSession = await passkeySessionsService.GetOngoingAuthenticationSession(request.Challenge, ct)
                                     ?? throw new NotFoundException("Authentication session not found!");
@@ -85,8 +85,7 @@ public class PasskeyAuthService(
         }
 
         await passkeyCryptographyService.ValidateAuthentication(request, user, authenticationSession, ct);
-
-        var authResponse = encryptionService.GenerateAccessToken(user.Id, user.Username);
+        var authResponse = await authorizationService.Authorize(user, ct);
         return authResponse;
     }
 }

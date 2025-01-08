@@ -1,38 +1,24 @@
-import {Avatar, Box, Button, Paper, Typography} from '@mui/material';
-import React, {useEffect, useState} from 'react';
-import {useSelector} from 'react-redux';
-import {ApplicationState} from '../../redux';
-import {userApi} from '../../shared/api/http/api';
-import {ProfileHeaderProps} from './ProfileHeaderProps';
+import { Avatar, Box, Button, Paper, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { ApplicationState } from '../../redux';
+import { ProfileHeaderProps } from './ProfileHeaderProps';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import {
     transformUtcStringToDateMonthHoursMinutesString,
     transformUtcToLocalDate
 } from '../../shared/assets';
-import {EditProfileCustomModal} from "../CustomModal";
-import {UserInfoCache} from "../../shared/types";
+import { EditProfileCustomModal } from "../CustomModal";
 import { WarningProfileBox } from './WarningsProfileBox/WarningProfileBox';
 import styles from './ProfileHeader.module.scss';
+import { UserApi } from '../../shared/api/http/user-api';
 
 const ProfileHeader = ({user, setUser}: ProfileHeaderProps) => {
-
-    const authorizedUser = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
-
-    const isUserOnHisProfilePage = (): boolean => {
-        if (user) {
-            return user && (authorizedUser?.id === user.id);
-        } else {
-            return false;
-        }
-
-    };
-
+    const isUserOnHisProfilePage = useSelector<ApplicationState, boolean>(state => state.user !== undefined && state.user?.id === user.id);
     const [editProfileModalOpen, setEditProfileModalOpen] = useState<boolean>(false);
-
     const [avatarLink, setAvatarLink] = useState<string>("");
-
-    const fetchAvatarUrl = (userId: number) => userApi.getAvatarUrlById(userId).then(response => setAvatarLink(response.data));
+    const fetchAvatarUrl = (userId: number) => UserApi.getAvatarUrlById(userId).then(response => setAvatarLink(response.data));
 
     useEffect(() => {
         if (user) {
@@ -60,7 +46,7 @@ const ProfileHeader = ({user, setUser}: ProfileHeaderProps) => {
                     </div>
 
                     <div>
-                        {isUserOnHisProfilePage() &&
+                        {isUserOnHisProfilePage &&
                             <Button variant="outlined" onClick={() => setEditProfileModalOpen(true)}>Edit
                                 profile</Button>}
                     </div>

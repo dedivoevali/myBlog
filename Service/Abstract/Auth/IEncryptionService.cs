@@ -4,7 +4,8 @@ namespace Service.Abstract.Auth
 {
     public interface IEncryptionService
     {
-        public AuthenticateResponse GenerateAccessToken(int userId, string username);
+        public string GenerateAccessToken(int userId, string username);
         public string EncryptPassword(string phrase);
+        public RefreshToken GenerateRefreshToken();
     }
 }

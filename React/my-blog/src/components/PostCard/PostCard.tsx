@@ -17,7 +17,7 @@ import {PostCardProps} from './PostCardProps';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import * as assets from '../../shared/assets';
 import CommentIcon from '@mui/icons-material/Comment';
-import {postApi, userApi} from '../../shared/api/http/api';
+import { postApi } from '../../shared/api/http/api';
 import {CommentReel} from "../CommentReel";
 import {DefaultPageSize} from "../../shared/config";
 import {FilterLogicalOperator} from "../../shared/api/types/paging";
@@ -30,14 +30,14 @@ import {PostForm} from '../PostForm';
 import {AxiosResponse} from 'axios';
 import {PostDto, PostModel} from '../../shared/api/types/post';
 import {useSelector} from "react-redux";
-import {ApplicationState} from '../../redux';
+import {ApplicationState, CurrentUserState} from '../../redux';
 import {ConfirmActionCustomModal} from "../CustomModal";
-import {UserInfoCache} from "../../shared/types";
 import {useNotifier} from '../../hooks';
 import { FlagEmoji } from '../FlagEmoji/FlagEmoji';
 import { Analytics } from '@mui/icons-material';
 import { PostCardStatisticsDialog } from './PostCardStatisticsDialog';
 import styles from "./post-card.module.scss";
+import { UserApi } from '../../shared/api/http/user-api';
 
 const PostCard = ({
                       initialPost,
@@ -67,7 +67,7 @@ const PostCard = ({
         }
     }
 
-    const user = useSelector<ApplicationState, (UserInfoCache | null)>(state => state.user);
+    const user = useSelector<ApplicationState, (CurrentUserState | undefined | null)>(state => state.user);
 
     const [statsDialogOpen, setStatsDialogOpen] = useState(false);
 
@@ -84,7 +84,7 @@ const PostCard = ({
     const [commentsOpen, setCommentsOpen] = useState<boolean>(false);
     const [commentsTouched, setCommentsTouched] = useState<boolean>(false);
 
-    const fetchAvatarUrl = (userId: number) => userApi.getAvatarUrlById(userId).then(response => setAvatarLink(response.data));
+    const fetchAvatarUrl = (userId: number) => UserApi.getAvatarUrlById(userId).then(response => setAvatarLink(response.data));
     const touchComments = () => setCommentsTouched(true);
 
     const handleExpandCommentSection = () => {

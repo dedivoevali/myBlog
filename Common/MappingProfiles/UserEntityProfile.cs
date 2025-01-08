@@ -20,6 +20,8 @@ namespace Common.MappingProfiles
                 .ForMember(dst => dst.Password, opt => opt.MapFrom(src => src.Password))
                 .ForMember(dst => dst.RegistrationDate, opt => opt.NullSubstitute(DateTime.UtcNow))
                 .ForMember(dst => dst.PasswordHash, opt => opt.Ignore())
+                .ForMember(dst => dst.RefreshToken, opt => opt.Ignore())
+                .ForMember(dst => dst.RefreshTokenExpiresAt, opt => opt.Ignore())
                 .ForMember(dst => dst.LastActivity, opt => opt.Ignore())
                 .ForMember(dst => dst.Avatar, opt => opt.Ignore())
                 .ForMember(dst => dst.Posts, opt => opt.Ignore())
@@ -65,8 +67,9 @@ namespace Common.MappingProfiles
                 .ForMember(dst => dst.BanLogs, opt => opt.Ignore())
                 .ForMember(dst => dst.IsBanned, opt => opt.MapFrom(src => false))
                 .ForMember(dst => dst.Initials, opt => opt.Ignore())
+                .ForMember(dst => dst.RefreshToken, opt => opt.Ignore())
+                .ForMember(dst => dst.RefreshTokenExpiresAt, opt => opt.Ignore())
                 .ForMember(dst => dst.RegistrationDate, opt => opt.Ignore());
-
         }
     }
 }

@@ -15,6 +15,7 @@ namespace API.Extensions
                     builder =>
                     {
                         builder
+                            .AllowCredentials()
                             .WithOrigins(policyConfiguration.AllowedOrigins)
                             .AllowAnyHeader()
                             .WithMethods(policyConfiguration.AllowedMethods);

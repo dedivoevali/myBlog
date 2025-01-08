@@ -29,7 +29,8 @@ namespace API.Controllers
         public async Task<PostModel> GetByIdWithUsernameAndTopicAndCommentsAsync(int postId,
             CancellationToken cancellationToken)
         {
-            var post = await _postsService.GetByIdWithIncludeAsync(postId, cancellationToken, e => e.User,
+            var post = await _postsService.GetByIdWithIncludeAsync(postId, cancellationToken, 
+                e => e.User,
                 e => e.Comments);
 
             return _mapper.Map<PostModel>(post);
@@ -42,8 +43,11 @@ namespace API.Controllers
         {
             var request = _mapper.Map<Post>(postContent);
             request.UserId = CurrentUserId;
-            var createdPost = await _postsService.Add(request, cancellationToken);
-            return _mapper.Map<PostModel>(createdPost);
+            var post = await _postsService.Add(request, cancellationToken);
+            post = await _postsService.GetByIdWithIncludeAsync(post.Id, cancellationToken, 
+                e => e.User,
+                e => e.Comments);
+            return _mapper.Map<PostModel>(post);
         }
 
         [HttpPut("{postId:int}")]

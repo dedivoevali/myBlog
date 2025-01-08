@@ -1,5 +1,8 @@
 ﻿using API.Controllers.Base;
+using API.Extensions;
+using AutoMapper;
 using Common.Dto.Auth;
+using Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
@@ -9,7 +12,7 @@ namespace API.Controllers.Auth;
 
 [FeatureGate("Passkey")]
 [Route("api/passkey")]
-public class PasskeyAuthController(IPasskeyAuthService passkeyAuthService) : AppBaseController
+public class PasskeyAuthController(IPasskeyAuthService passkeyAuthService, IMapper mapper) : AppBaseController
 {
 
     [HttpGet("registration-options")]
@@ -39,6 +42,7 @@ public class PasskeyAuthController(IPasskeyAuthService passkeyAuthService) : App
     public async Task<IActionResult> Authenticate(AuthenticatePasskeyRequest request, CancellationToken ct)
     {
         var authenticateResponse = await passkeyAuthService.Authenticate(request, ct);
-        return Ok(authenticateResponse);
+        HttpContext.AddRefreshTokenCookie(authenticateResponse.RefreshToken, authenticateResponse.RefreshTokenExpiresAt);
+        return Ok(mapper.Map<AuthorizationResponseModel>(authenticateResponse));
     }
 }

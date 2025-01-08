@@ -21,13 +21,14 @@ const AccountMenuDropdown = ({icon}: { icon: JSX.Element }) => {
 
 
     const deleteUserFromRedux = () => {
-        dispatch({type: ReduxActionTypes.ChangeUser, payload: null});
+        dispatch({type: ReduxActionTypes.DeleteUser });
     }
 
     const handleLogout = () => {
-        authApi.logout();
-        deleteUserFromRedux();
-        notifyUser("Logged out successfully", "success");
+        authApi.logout().then((_) => {
+            deleteUserFromRedux();
+            notifyUser("Logged out successfully", "success");
+        });
     }
 
     const openLogoutModal = () => setModalOpen(true);

@@ -3,21 +3,29 @@ using DAL.Repositories.Abstract;
 using Domain;
 using Service.Abstract;
 using System.Linq.Expressions;
+using Common.Models;
+using Domain.Abstract;
 
 namespace Service
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IAvatarService _avatarService;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, IAvatarService avatarService)
         {
             _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
+            _avatarService = avatarService;
         }
 
         public async Task<User> Add(User entity, CancellationToken cancellationToken)
         {
-            return await _userRepository.AddAsync(entity, cancellationToken);
+            var user = await _userRepository.AddAsync(entity, saveChanges: false , cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
+            return user;
         }
 
         public async Task<User> GetByIdAsync(int id, CancellationToken cancellationToken)
@@ -66,15 +74,6 @@ namespace Service
             return await _userRepository.Update(user, cancellationToken);
         }
 
-        public async Task<User> GetByUsernameAsync(string username, CancellationToken cancellationToken)
-        {
-            var usernameFound = await _userRepository.GetWhereAsync(e => e.Username == username, cancellationToken);
-
-            return usernameFound.FirstOrDefault() ??
-                   throw new ValidationException($"{nameof(User)} with name {username} was not found!");
-        }
-
-
         public async Task<User> GetByIdWithIncludeAsync(int id, CancellationToken cancellationToken,
             params Expression<Func<User, object>>[] includeProperties)
         {
@@ -109,6 +108,14 @@ namespace Service
                        ?? throw new NotFoundException($"{nameof(User)} of ID: {userId} does not exist");
 
             return user;
+        }
+
+        public async Task<UserBadgeModel> GetBadge(int userId, CancellationToken cancellationToken)
+        {
+            var model = await _userRepository.GetBadge(userId, cancellationToken)
+                ?? throw new NotFoundException($"User {userId} was not found");
+            model.AvatarUrl = await _avatarService.GetAvatarUrlAsync(userId, cancellationToken);
+            return model;
         }
     }
 }
