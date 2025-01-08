@@ -57,7 +57,7 @@ namespace Service.Auth
 
         public RefreshToken GenerateRefreshToken()
         {
-            const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+=/";
+            const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             const int tokenLength = EntityConfigurationConstants.RefreshTokenLength;
 
             using var rng = RandomNumberGenerator.Create();

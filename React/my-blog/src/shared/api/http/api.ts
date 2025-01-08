@@ -9,10 +9,11 @@ import { CommentDto } from "../types/comment";
 const IMMEDIATE_LOGOUT_STATUSES = [ HttpStatusCode.Unauthorized, HttpStatusCode.Forbidden ];
 
 export const instance = axios.create({
-    withCredentials: false,
+    withCredentials: true,
     baseURL: API_URL
 });
 
+// JWT access token in headers request interceptor
 instance.interceptors.request.use((config) => {
 
     if (config && config.headers)
@@ -22,6 +23,30 @@ instance.interceptors.request.use((config) => {
 
     return config;
 })
+
+// JWT refresh token if a 401 Unauthorized response was returned interceptor
+instance.interceptors.response.use((response) => {
+    return Promise.resolve(response);
+}, async (error) => {
+    const err = error as AxiosError;
+
+    if (err.response?.status !== 401) {
+        return Promise.reject(err);
+    }
+
+    const currentUserId = sessionStorage.getItem(UserIdTokenKeyName) || localStorage.getItem(UserIdTokenKeyName) || "";
+    const newAccessToken = await instance.get<AuthenticateResponse>(`/auth/refresh-access-token?targetUserId=${currentUserId}`)
+
+    const storage: Storage = sessionStorage.getItem(UserIdTokenKeyName) ? sessionStorage : localStorage;
+
+    storage.setItem(JwtTokenKeyName, newAccessToken.data.accessToken);
+
+    if (error.response?.config.headers) {
+        error.response.config.headers["Authorization"] = `Bearer ${newAccessToken.data.accessToken}`;
+        return axios(error.response.config);
+    }
+    return Promise.reject(err);
+});
 
 instance.interceptors.response.use((response) => response,
 (err) => {

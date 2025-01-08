@@ -1,4 +1,5 @@
-﻿using Common.Dto.Auth;
+﻿using System.Security.Authentication;
+using Common.Dto.Auth;
 using DAL.Repositories.Abstract;
 using Domain;
 using Common.Exceptions;
@@ -57,20 +58,35 @@ public class AuthorizationService : IAuthorizationService
         };
     }
 
-    public async Task<string> GetNewAccessToken(string refreshToken, CancellationToken ct = default)
+    public async Task<string> GetNewAccessToken(string refreshToken, int userId, CancellationToken ct = default)
     {
-        if (string.IsNullOrWhiteSpace(refreshToken) ||
-            refreshToken.Length != EntityConfigurationConstants.RefreshTokenLength)
+        try
         {
-            throw new ValidationException($"Refresh token should be {EntityConfigurationConstants.RefreshTokenLength} characters long");
-        }
-        var user = await _userRepository.GetUserByActiveRefreshToken(refreshToken, ct)
-            ?? throw new NotFoundException("User not found");
+            if (string.IsNullOrWhiteSpace(refreshToken))
+            {
+                throw new ValidationException("Refresh token was not found");
+            }
+            if (refreshToken.Length != EntityConfigurationConstants.RefreshTokenLength)
+            {
+                throw new ValidationException($"Refresh token should be {EntityConfigurationConstants.RefreshTokenLength} characters long");
+            }
+            var user = await _userRepository.GetByIdAsync(userId, ct)
+                       ?? throw new NotFoundException("User not found");
 
-        user.LastActivity = DateTime.UtcNow;
-        await _unitOfWork.CommitAsync(ct);
-        var accessToken = _encryptionService.GenerateAccessToken(user.Id, user.Username);
-        return accessToken;
+            if (string.Compare(user.RefreshToken, refreshToken, StringComparison.Ordinal) != 0)
+            {
+                throw new ValidationException($"Refresh token is invalid");
+            }
+
+            user.LastActivity = DateTime.UtcNow;
+            await _unitOfWork.CommitAsync(ct);
+            var accessToken = _encryptionService.GenerateAccessToken(user.Id, user.Username);
+            return accessToken;
+        }
+        catch(Exception ex)
+        {
+            throw new AccessDeniedException(ex.Message);
+        }
     }
 
     public async Task PurgeRefreshToken(int userId, CancellationToken ct = default)
@@ -98,7 +114,7 @@ public class AuthorizationService : IAuthorizationService
     {
         if (string.IsNullOrEmpty(accessToken))
         {
-            return true;
+            return false;
         }
 
         var key = JwtUtils.GetJwtCacheKey(accessToken);

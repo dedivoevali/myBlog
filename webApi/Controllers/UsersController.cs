@@ -29,16 +29,14 @@ namespace API.Controllers
         public async Task<UserModel> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
             var user = await _userService.GetUserProfileData(id, cancellationToken);
-
             return _mapper.Map<UserModel>(user);
         }
 
-        [HttpGet("current")]
-        public async Task<UserModel> GetAuthenticatedUserAsync(CancellationToken cancellationToken)
+        [HttpGet("current/badge")]
+        public async Task<IActionResult> GetCurrentUserProfileBadge(CancellationToken cancellationToken)
         {
-            var user = await _userService.GetByIdAsync(CurrentUserId, cancellationToken);
-
-            return _mapper.Map<UserModel>(user);
+            var model = await _userService.GetBadge(CurrentUserId, cancellationToken);
+            return Ok(model);
         }
 
         [HttpPatch]
@@ -49,7 +47,6 @@ namespace API.Controllers
             var mappedRequest = _mapper.Map<User>(newProfileInfo);
             mappedRequest.Id = CurrentUserId;
             var updatedUser = await _userService.UpdateAsync(mappedRequest, cancellationToken);
-
             return _mapper.Map<UserModel>(updatedUser);
         }
 

@@ -25,9 +25,10 @@ const AccountMenuDropdown = ({icon}: { icon: JSX.Element }) => {
     }
 
     const handleLogout = () => {
-        authApi.logout();
-        deleteUserFromRedux();
-        notifyUser("Logged out successfully", "success");
+        authApi.logout().then((_) => {
+            deleteUserFromRedux();
+            notifyUser("Logged out successfully", "success");
+        });
     }
 
     const openLogoutModal = () => setModalOpen(true);

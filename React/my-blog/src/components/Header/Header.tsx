@@ -7,22 +7,22 @@ import { CustomNavLink } from '../CustomNavLink';
 import { Link } from 'react-router-dom';
 import { AccountMenuDropdown } from '../AccountMenuDropdown';
 import styles from "./header.module.scss";
-import { UserModel } from '../../shared/api/types/user';
 import { UserApi } from '../../shared/api/http/user-api';
+import { UserBadgeModel } from '../../shared/api/types/user';
 
 const Header = () => {
     const user = useSelector<ApplicationState, (CurrentUserState | undefined | null)>(state => state.user);
-    const [userInfo, setUserInfo] = useState<UserModel>();
+    const [userInfo, setUserInfo] = useState<UserBadgeModel>();
     const [avatarUrl, setAvatarUrl] = useState<string>();
 
     useEffect(() => {
         setUserInfo(undefined);
         setAvatarUrl(undefined);
         if (user) {
-            UserApi.getUserById(user.id).then((response) => {
+            UserApi.getCurrentUserBadge().then((response) => {
                 setUserInfo(response.data);
                 UserApi.getAvatarUrlById(user.id).then((response1) => {
-                    let avatarUrl = response1.data;
+                    const avatarUrl = response1.data;
                     setAvatarUrl(avatarUrl);
                 });
             });

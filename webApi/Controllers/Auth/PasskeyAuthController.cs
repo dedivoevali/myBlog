@@ -1,4 +1,5 @@
 ﻿using API.Controllers.Base;
+using API.Extensions;
 using Common.Dto.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,7 @@ public class PasskeyAuthController(IPasskeyAuthService passkeyAuthService) : App
     public async Task<IActionResult> Authenticate(AuthenticatePasskeyRequest request, CancellationToken ct)
     {
         var authenticateResponse = await passkeyAuthService.Authenticate(request, ct);
+        HttpContext.AddRefreshTokenCookie(authenticateResponse.RefreshToken, authenticateResponse.RefreshTokenExpiresAt);
         return Ok(authenticateResponse);
     }
 }

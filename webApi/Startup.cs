@@ -93,6 +93,7 @@ namespace API
         {
             // Configure the HTTP request pipeline.
 
+            app.UseHttpsRedirection();
             if (env.IsDevelopment())
             {
                 app.UseSwagger();
@@ -100,7 +101,6 @@ namespace API
             }
 
             app.UseExceptionHandler();
-
             app.UseRouting();
             app.UseCors();
 

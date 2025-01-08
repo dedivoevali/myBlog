@@ -2,6 +2,7 @@ import { AxiosResponse, HttpStatusCode } from "axios";
 import { instance } from "./api";
 import { UserInfoDto, UserModel } from "../types/user";
 import { PasskeyListModel } from "../types/authentication/passkey";
+import { UserBadgeModel } from "../types/user/user-badge-model";
 
 export class UserApi {
     static getAvatarUrlById(userId: number): Promise<AxiosResponse<string>> {
@@ -10,6 +11,9 @@ export class UserApi {
         });
     }
 
+    static getCurrentUserBadge(): Promise<AxiosResponse<UserBadgeModel>> {
+        return instance.get(`/users/current/badge`);
+    }
     static getUserById(userId: number): Promise<AxiosResponse<UserModel>> {
         return instance.get(`/users/${userId}`)
     }

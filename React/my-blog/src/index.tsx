@@ -62,6 +62,8 @@ const reducer = (state = defaultState, action: { type: string, payload: boolean 
             return state;
         }
         case ReduxActionTypes.DeleteUser: {
+            localStorage.clear();
+            sessionStorage.clear();
             return { ...state, user: null, isAuthorized: false }
         }
         case ReduxActionTypes.ChangeUser: {

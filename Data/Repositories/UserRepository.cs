@@ -1,4 +1,5 @@
-﻿using DAL.Repositories.Abstract;
+﻿using Common.Models;
+using DAL.Repositories.Abstract;
 using DAL.Repositories.Abstract.Base;
 using Domain;
 using Microsoft.EntityFrameworkCore;
@@ -34,8 +35,14 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         return await _db.Users.FirstOrDefaultAsync(u => u.Username == username && u.PasswordHash == passwordHash, ct);
     }
 
-    public async Task<User?> GetUserByActiveRefreshToken(string refreshToken, CancellationToken ct = default)
+    public async Task<UserBadgeModel?> GetBadge(int userId, CancellationToken ct = default)
     {
-        return await _db.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken && u.RefreshTokenExpiresAt > DateTime.UtcNow, ct);
+        return await _db.Users
+            .Where(u => u.Id == userId)
+            .Select(u => new UserBadgeModel {
+                Username = u.Username,
+                Initials = u.Initials,
+                AvatarUrl = null
+            }).FirstOrDefaultAsync(ct);
     }
 }

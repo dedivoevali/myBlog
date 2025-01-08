@@ -1,4 +1,6 @@
-﻿using API.Controllers.Base;
+﻿using System.ComponentModel.DataAnnotations;
+using API.Controllers.Base;
+using API.Extensions;
 using AutoMapper;
 using Common.Dto.Auth;
 using Common.Models;
@@ -34,29 +36,30 @@ namespace API.Controllers.Auth
         {
             var authenticationResponse = await _passwordAuthService.AuthenticateAsync(userData, cancellationToken);
 
-            HttpContext.Response.Cookies.Append(
-                JwtUtils.CookieRefreshTokenKey,
-                authenticationResponse.RefreshToken,
-                new CookieOptions { HttpOnly = true, Secure = true, Expires = authenticationResponse.RefreshTokenExpiresAt, SameSite = SameSiteMode.None });
-            
+            HttpContext.AddRefreshTokenCookie(authenticationResponse.RefreshToken, authenticationResponse.RefreshTokenExpiresAt);
             return Ok(_mapper.Map<AuthorizationResponseModel>(authenticationResponse));
         }
 
         [AllowAnonymous]
         [HttpGet("refresh-access-token")]
-        public async Task<IActionResult> RefreshAccessToken(CancellationToken ct)
+        public async Task<IActionResult> RefreshAccessToken(
+            [FromQuery] [Required] int targetUserId,
+            CancellationToken ct)
         {
             var refreshToken = HttpContext.Request.Cookies[JwtUtils.CookieRefreshTokenKey];
-
-            var newToken = await _authorizationService.GetNewAccessToken(refreshToken, ct);
-            return Ok(new AuthorizationResponseModel { AccessToken = newToken });
+            var newToken = await _authorizationService.GetNewAccessToken(refreshToken, targetUserId, ct);
+            return Ok(new AuthorizationResponseModel
+            {
+                AccessToken = newToken,
+                UserId = targetUserId
+            });
         }
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout(CancellationToken ct)
         {
             var accessToken = HttpContext.Request.Headers.Authorization.ToString()
-                ?.Replace(JwtBearerDefaults.AuthenticationScheme, string.Empty).Trim();
+                ?.Replace(JwtBearerDefaults.AuthenticationScheme, string.Empty)?.Trim();
 
             await _authorizationService.PurgeRefreshToken(CurrentUserId, ct);
             await _authorizationService.BlacklistAccessToken(accessToken, ct);
