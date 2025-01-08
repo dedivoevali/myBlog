@@ -21,7 +21,7 @@ jobs:
            cd React/my-blog
            ls -l
            touch .env
-           echo -n REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} > .env
+           echo REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} > .env
            echo HTTPS=true >> .env
            cat .env
       - name: Build And Deploy
