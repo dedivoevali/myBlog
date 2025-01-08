@@ -5,7 +5,6 @@ using Domain.Messaging;
 using MassTransit;
 using Service.Abstract;
 
-
 namespace API.EventConsumers;
 
 public class AnalyzePostMessageConsumer : IConsumer<AnalyzePostMessage>
