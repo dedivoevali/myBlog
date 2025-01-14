@@ -25,7 +25,7 @@ public class EncryptionServiceTests
 
 
     [Fact]
-    public async Task GenerateNewUniqueRefreshToken_ShouldGenerateToken_Of_RefreshTokenLength()
+    public void GenerateNewUniqueRefreshToken_ShouldGenerateToken_Of_RefreshTokenLength()
     {
         // Arrange
         const int expectedLength = EntityConfigurationConstants.RefreshTokenLength;
@@ -40,7 +40,7 @@ public class EncryptionServiceTests
     [Theory]
     [InlineData("password", "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8")]
     [InlineData("lovemama123", "9bcd53793c43361386708990a5a7827140deb591910da5fd8649a9b81759ffa6")]
-    public async Task EncryptPassword_ShouldEncrypt_Sha256(string input, string expected)
+    public void EncryptPassword_ShouldEncrypt_Sha256(string input, string expected)
     {
         // Arrange
 

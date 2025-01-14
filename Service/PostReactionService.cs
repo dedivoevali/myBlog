@@ -89,7 +89,7 @@ namespace Service
             var found = await _postReactionRepository.GetWhereAsync(
                 r => r.PostId == entity.PostId && r.UserId == entity.UserId, cancellationToken);
 
-            var existingReaction = found.FirstOrDefault();
+            var existingReaction = found.FirstOrDefault() ?? throw new ValidationException("Reaction was not found");
 
 
             existingReaction.ReactionType = entity.ReactionType;
@@ -123,7 +123,7 @@ namespace Service
                 await _postReactionRepository.GetWhereAsync(e => e.PostId == postId && e.UserId == issuerId,
                     cancellationToken);
 
-            var postReaction = matchingReactions.FirstOrDefault();
+            var postReaction = matchingReactions.FirstOrDefault() ?? throw new ValidationException("Reaction was not found");
 
             await _postReactionRepository.RemoveAsync(postReaction.Id, cancellationToken);
         }
