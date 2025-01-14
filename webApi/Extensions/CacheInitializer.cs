@@ -8,8 +8,7 @@ public static class CacheInitializer
 {
     public static void AddCache(this IServiceCollection services, IConfiguration configuration)
     {
-        var cacheOptions = new CacheOptions();
-        configuration.GetSection(CacheOptions.Config).Bind(cacheOptions);
+        var cacheOptions = GetOptions(services, configuration);
         services.AddOptions<CacheOptions>().Bind(configuration.GetSection(CacheOptions.Config));
 
         switch (cacheOptions.Provider)
@@ -31,5 +30,12 @@ public static class CacheInitializer
                 break;
             }
         }
+    }
+
+    public static CacheOptions GetOptions(IServiceCollection services, IConfiguration configuration)
+    {
+        var cacheOptions = new CacheOptions();
+        configuration.GetSection(CacheOptions.Config).Bind(cacheOptions);
+        return cacheOptions;
     }
 }
