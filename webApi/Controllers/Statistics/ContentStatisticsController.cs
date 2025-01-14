@@ -18,7 +18,7 @@ public class ContentStatisticsController : AppBaseController
         _service = service;
     }
 
-    [HttpPost("post/{postId:int}")]
+    [HttpPost("post/{postId:int:min(0)}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetPostStats(
         [FromRoute] [Required] int postId,

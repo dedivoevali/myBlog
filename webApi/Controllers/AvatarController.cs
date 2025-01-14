@@ -18,7 +18,7 @@ namespace API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{userId:int}")]
+        [HttpGet("{userId:int:min(0)}")]
         public async Task<IActionResult> GetAvatarLinkByUserIdAsync(int userId, CancellationToken cancellationToken)
         {
             var url = await _avatarService.GetAvatarUrlAsync(userId, cancellationToken);
