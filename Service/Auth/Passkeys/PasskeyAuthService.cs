@@ -3,6 +3,7 @@ using Common.Dto.Auth;
 using Common.Exceptions;
 using Common.Models.Passkey;
 using DAL.Repositories.Abstract;
+using Domain.Abstract;
 using Service.Abstract.Auth;
 using Service.Abstract.Auth.Passkeys;
 
@@ -12,7 +13,8 @@ public class PasskeyAuthService(
     IPasskeyCryptographyService passkeyCryptographyService,
     IPasskeyRepository passkeyRepository,
     IPasskeySessionsService passkeySessionsService,
-    IAuthorizationService authorizationService) : IPasskeyAuthService
+    IAuthorizationService authorizationService,
+    IUnitOfWork unitOfWork) : IPasskeyAuthService
 {
     public async Task<PasskeyRegistrationOptionsModel> GetOrCreateRegistrationSession(int userId, CancellationToken ct)
     {
@@ -52,6 +54,7 @@ public class PasskeyAuthService(
         var passkey = await passkeyCryptographyService.ValidateRegistration(request, user, ongoingRegistrationSession, ct);
 
         await passkeyRepository.AddAsync(passkey, ct);
+        await unitOfWork.CommitAsync(ct);
     }
 
     public async Task<PasskeyAuthenticationOptionsModel> StartAuthenticationSession(CancellationToken ct)

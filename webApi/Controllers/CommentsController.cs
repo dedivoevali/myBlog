@@ -25,7 +25,7 @@ namespace API.Controllers
 
 
         [AllowAnonymous]
-        [HttpGet("{commentId:int}")]
+        [HttpGet("{commentId:int:min(0)}")]
         public async Task<CommentModel> GetByIdAsync(int commentId, CancellationToken cancellationToken)
         {
             var result =
@@ -38,7 +38,7 @@ namespace API.Controllers
 
 
         [AllowAnonymous]
-        [HttpGet("[action]/{postId:int}")]
+        [HttpGet("[action]/{postId:int:min(0)}")]
         public async Task<IEnumerable<CommentModel>> GetByPostIdAsync(int postId, CancellationToken cancellationToken)
         {
             var comments = await _commentsService.GetCommentsByPostId(postId, cancellationToken);
@@ -64,7 +64,7 @@ namespace API.Controllers
         }
 
 
-        [HttpPut("{commentId:int}")]
+        [HttpPut("{commentId:int:min(0)}")]
         [UpdatesUserActivity]
         public async Task<CommentModel> EditCommentAsync(int commentId, [FromBody] CommentDto updateRequest,
             CancellationToken cancellationToken)
@@ -79,7 +79,7 @@ namespace API.Controllers
             return _mapper.Map<CommentModel>(updatedComment);
         }
 
-        [HttpDelete("{commentId:int}")]
+        [HttpDelete("{commentId:int:min(0)}")]
         [UpdatesUserActivity]
         public async Task DeleteCommentAsync(int commentId, CancellationToken cancellationToken)
         {

@@ -36,7 +36,11 @@ public class ContentStatisticsService : IContentStatisticsService
             dto.EndDate = new DateTime(dto.EndDate.Year, dto.EndDate.Month, 1);
         }
 
-        for (var date = dto.StartDate; date <= dto.EndDate; date = measure switch { TimeMeasure.Day => date.AddDays(1), TimeMeasure.Month => date.AddMonths(1) })
+        for (var date = dto.StartDate; date <= dto.EndDate; date = measure switch {
+                 TimeMeasure.Day => date.AddDays(1),
+                 TimeMeasure.Month => date.AddMonths(1),
+                 _ => throw new ArgumentOutOfRangeException(nameof(measure), measure, null)
+             })
         {
             dates.Add(date.Date);
         }

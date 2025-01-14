@@ -3,6 +3,7 @@ using DAL.Repositories.Abstract;
 using Domain;
 using Service.Abstract;
 using System.Linq.Expressions;
+using Domain.Abstract;
 
 namespace Service
 {
@@ -10,11 +11,13 @@ namespace Service
     {
         private readonly IPostReactionRepository _postReactionRepository;
         private readonly IPostRepository _postRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PostReactionService(IPostReactionRepository postReactionRepository, IPostRepository postRepository)
+        public PostReactionService(IPostReactionRepository postReactionRepository, IPostRepository postRepository, IUnitOfWork unitOfWork)
         {
             _postReactionRepository = postReactionRepository;
             _postRepository = postRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PostReaction> GetByIdAsync(int id, CancellationToken cancellationToken)
@@ -52,7 +55,9 @@ namespace Service
                     $"{nameof(Post)}ID: {entity.PostId} already has found reaction from {nameof(User)}ID: {entity.UserId}");
             }
 
-            return await _postReactionRepository.AddAsync(entity, cancellationToken);
+            var reaction = await _postReactionRepository.AddAsync(entity, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
+            return reaction;
         }
 
         public async Task RemoveAsync(int reactionId, int issuerId, CancellationToken cancellationToken)
@@ -84,7 +89,7 @@ namespace Service
             var found = await _postReactionRepository.GetWhereAsync(
                 r => r.PostId == entity.PostId && r.UserId == entity.UserId, cancellationToken);
 
-            var existingReaction = found.FirstOrDefault();
+            var existingReaction = found.FirstOrDefault() ?? throw new ValidationException("Reaction was not found");
 
 
             existingReaction.ReactionType = entity.ReactionType;
@@ -118,7 +123,7 @@ namespace Service
                 await _postReactionRepository.GetWhereAsync(e => e.PostId == postId && e.UserId == issuerId,
                     cancellationToken);
 
-            var postReaction = matchingReactions.FirstOrDefault();
+            var postReaction = matchingReactions.FirstOrDefault() ?? throw new ValidationException("Reaction was not found");
 
             await _postReactionRepository.RemoveAsync(postReaction.Id, cancellationToken);
         }

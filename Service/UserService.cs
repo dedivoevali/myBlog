@@ -23,7 +23,7 @@ namespace Service
 
         public async Task<User> Add(User entity, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.AddAsync(entity, saveChanges: false , cancellationToken);
+            var user = await _userRepository.AddAsync(entity, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
             return user;
         }

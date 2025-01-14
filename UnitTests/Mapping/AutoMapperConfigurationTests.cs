@@ -6,14 +6,10 @@ namespace UnitTests.Mapping;
 
 public class AutoMapperConfigurationTests
 {
-    private IMapper _mapper;
-    private MapperConfiguration _subject;
+    private MapperConfiguration _subject = null!;
 
-    [Fact]
-    public async Task Assert_AutoMapperConfiguration_IsValid()
+    public AutoMapperConfigurationTests()
     {
-
-        // Arrange
         var mappingAssemblies = new List<Assembly>
         {
             typeof(MappingAssemblyMarker).Assembly
@@ -23,11 +19,13 @@ public class AutoMapperConfigurationTests
         {
             cfg.AddMaps(mappingAssemblies);
         });
-        _mapper = _subject.CreateMapper();
+        var mapper = _subject.CreateMapper();
+    }
 
-        // Act
+    [Fact]
+    public void Assert_AutoMapperConfiguration_IsValid()
+    {
         // Assert
         _subject.AssertConfigurationIsValid();
     }
-
 }

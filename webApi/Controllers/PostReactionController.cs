@@ -24,7 +24,7 @@ namespace API.Controllers
 
 
         [AllowAnonymous]
-        [HttpGet("{postId:int}")]
+        [HttpGet("{postId:int:min(0)}")]
         public async Task<IEnumerable<PostReactionModel>> GetByPostIdAsync(int postId,
             CancellationToken cancellationToken)
         {
@@ -62,7 +62,7 @@ namespace API.Controllers
             return _mapper.Map<PostReactionModel>(editedReaction);
         }
 
-        [HttpDelete("{postId:int}")]
+        [HttpDelete("{postId:int:min(0)}")]
         [UpdatesUserActivity]
         public async Task RemoveReactionByPostIdAsync(int postId, CancellationToken cancellationToken)
         {

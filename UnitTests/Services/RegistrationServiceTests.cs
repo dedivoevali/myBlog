@@ -57,7 +57,7 @@ public class RegistrationServiceTests
         _userRepository.IsNicknameOccupied(nickname, _ct).Returns(false);
         _mapper.Map<User>(request).Returns(user);
         _encryptionService.EncryptPassword("passwd").Returns(hash);
-        _userRepository.AddAsync(user, false, _ct).Returns(user);
+        _userRepository.AddAsync(user, _ct).Returns(user);
 
         // Act
         var actual = await _subject.RegisterAsync(request, _ct);

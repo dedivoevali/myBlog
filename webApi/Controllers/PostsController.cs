@@ -25,7 +25,7 @@ namespace API.Controllers
 
 
         [AllowAnonymous]
-        [HttpGet("{postId:int}")]
+        [HttpGet("{postId:int:min(0)}")]
         public async Task<PostModel> GetByIdWithUsernameAndTopicAndCommentsAsync(int postId,
             CancellationToken cancellationToken)
         {
@@ -64,7 +64,7 @@ namespace API.Controllers
             return _mapper.Map<PostModel>(updatedPost);
         }
 
-        [HttpDelete("{postId:int}")]
+        [HttpDelete("{postId:int:min(0)}")]
         [UpdatesUserActivity]
         public async Task DeletePostByIdAsync(int postId, CancellationToken cancellationToken)
         {
