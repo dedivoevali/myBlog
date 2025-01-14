@@ -6,7 +6,7 @@ namespace API.Extensions;
 
 public static class CacheInitializer
 {
-    public static CacheOptions AddCache(this IServiceCollection services, IConfiguration configuration)
+    public static void AddCache(this IServiceCollection services, IConfiguration configuration)
     {
         var cacheOptions = GetOptions(services, configuration);
         services.AddOptions<CacheOptions>().Bind(configuration.GetSection(CacheOptions.Config));
@@ -30,8 +30,6 @@ public static class CacheInitializer
                 break;
             }
         }
-
-        return cacheOptions;
     }
 
     public static CacheOptions GetOptions(IServiceCollection services, IConfiguration configuration)
