@@ -68,24 +68,12 @@ namespace DAL.Repositories.Abstract.Base
             return await query.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }
 
-        [Obsolete]
-        public async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken)
-        {
-            await AddAsync(entity, true, cancellationToken);
-            return entity;
-        }
-
-        public async Task<TEntity> AddAsync(TEntity entity, bool saveChanges = false, CancellationToken cancellationToken = default)
+        public async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
             await _db.Set<TEntity>().AddAsync(entity, cancellationToken);
 
-            if (saveChanges)
-            {
-                await _db.SaveChangesAsync(cancellationToken);
-            }
             return entity;
         }
-
 
         public async Task<CursorPagedResult<TEntity>> GetCursorPagedData(CursorPagedRequest pagedRequest,
             CancellationToken cancellationToken, params Expression<Func<TEntity, object>>[] includeProperties)

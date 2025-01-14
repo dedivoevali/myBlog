@@ -27,7 +27,7 @@ namespace Service
             var post = await _postRepository.GetByIdAsync(entity.PostId, cancellationToken)
                 ?? throw new ValidationException($"{nameof(Post)} of ID: {entity.PostId} does not exist");
 
-            var comment = await _commentRepository.AddAsync(entity, false, cancellationToken);
+            var comment = await _commentRepository.AddAsync(entity, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
             return comment;
         }

@@ -67,7 +67,7 @@ namespace Service
                     UserId = userId,
                     BlobName = fileName
                 };
-                await _avatarRepository.AddAsync(entity, false, cancellationToken);
+                await _avatarRepository.AddAsync(entity, cancellationToken);
             }
             else
             {

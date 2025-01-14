@@ -46,8 +46,8 @@ public class UserPunishmentsService : IUserPunishmentsService
             UserId = userId,
             Action = BanAction.Ban
         };
+
         await _banLogRepository.AddAsync(ban, ct);
-        
         user.IsBanned = true;
         await _unitOfWork.CommitAsync(ct);
     }
@@ -68,7 +68,6 @@ public class UserPunishmentsService : IUserPunishmentsService
             Action = BanAction.Unban
         };
         await _banLogRepository.AddAsync(ban, ct);
-
         user.IsBanned = false;
         await _unitOfWork.CommitAsync(ct);
     }
@@ -86,6 +85,7 @@ public class UserPunishmentsService : IUserPunishmentsService
         };
 
         await _warningRepository.AddAsync(newWarn, ct);
+        await _unitOfWork.CommitAsync(ct);
 
         var maximumAllowedWarnings = _punishmentOptions.MaxAllowedWarns;
         var currentWarnings = await _warningRepository.GetUserActiveWarningsCount(userId, ct);

@@ -33,7 +33,7 @@ namespace Service
                 throw new ValidationException($"Title {request.Title} is occupied");
             }
 
-            var post = await _postRepository.AddAsync(request, saveChanges: false, cancellationToken);
+            var post = await _postRepository.AddAsync(request, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
 
             await _bus.Publish(new AnalyzePostMessage(post.Id), ct: cancellationToken);

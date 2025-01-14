@@ -41,7 +41,7 @@ namespace Service.Auth
             var newUserEntity = _mapper.Map<User>(registerData);
             newUserEntity.PasswordHash = _encryptionService.EncryptPassword(newUserEntity.Password);
 
-            newUserEntity = await _userRepository.AddAsync(newUserEntity, false, cancellationToken);
+            newUserEntity = await _userRepository.AddAsync(newUserEntity, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
             return newUserEntity;
         }
