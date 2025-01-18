@@ -83,8 +83,7 @@ namespace API.Controllers
         [UpdatesUserActivity]
         public async Task DeleteCommentAsync(int commentId, CancellationToken cancellationToken)
         {
-            var currentUserId = CurrentUserId;
-            await _commentsService.RemoveAsync(commentId, currentUserId, cancellationToken);
+            await _commentsService.RemoveAsync(commentId, CurrentUserId, cancellationToken);
         }
 
         [AllowAnonymous]

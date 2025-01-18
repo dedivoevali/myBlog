@@ -9,5 +9,5 @@ public interface IAuthorizationService
     Task<string> GetNewAccessToken(string refreshToken, int userId, CancellationToken ct = default);
     Task PurgeRefreshToken(int userId, CancellationToken ct = default);
     Task BlacklistAccessToken(string? accessToken, CancellationToken ct = default);
-    Task<bool> IsTokenBlacklisted(string accessToken, CancellationToken ct = default);
+    Task<bool> IsTokenBlacklisted(string? accessToken, CancellationToken ct = default);
 }
