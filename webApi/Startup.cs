@@ -108,8 +108,6 @@ namespace API
             app.UseAuthorization();
             app.UseMiddleware<BannedUserMiddleware>();
             app.UseMiddleware<JwtAccessTokenBlacklistMiddleware>();
-            //app.UseDatabaseTransactions(); TODO: Bring back after DB transaction will be fixed
-
 
             app.UseEndpoints(endpoints =>
             {
