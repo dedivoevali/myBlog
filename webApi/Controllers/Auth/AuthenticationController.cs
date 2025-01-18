@@ -3,6 +3,7 @@ using API.Controllers.Base;
 using API.Extensions;
 using AutoMapper;
 using Common.Dto.Auth;
+using Common.Exceptions;
 using Common.Models;
 using Common.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -46,7 +47,8 @@ namespace API.Controllers.Auth
             [FromQuery] [Required] int targetUserId,
             CancellationToken ct)
         {
-            var refreshToken = HttpContext.Request.Cookies[JwtUtils.CookieRefreshTokenKey];
+            var refreshToken = HttpContext.Request.Cookies[JwtUtils.CookieRefreshTokenKey]
+                ?? throw new AccessDeniedException("No refresh token set up");
             var newToken = await _authorizationService.GetNewAccessToken(refreshToken, targetUserId, ct);
             return Ok(new AuthorizationResponseModel
             {
