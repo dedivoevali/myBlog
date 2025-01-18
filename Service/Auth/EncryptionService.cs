@@ -33,7 +33,7 @@ namespace Service.Auth
             ];
 
             var notBefore = DateTime.UtcNow;
-            var expires = notBefore.AddMinutes(_jwtOptions.AccessTokenValidityTimeMinutes);
+            var expires = notBefore.Add(_jwtOptions.AccessTokenValidityTime);
             var tokenObject = new JwtSecurityToken(
                 _jwtOptions.Issuer,
                 _jwtOptions.Audience,
