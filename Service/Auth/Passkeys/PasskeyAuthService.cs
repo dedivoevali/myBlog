@@ -91,4 +91,20 @@ public class PasskeyAuthService(
         var authResponse = await authorizationService.Authorize(user, ct);
         return authResponse;
     }
+
+    public async Task Deactivate(int passkeyId, int userId, CancellationToken ct)
+    {
+        var user = await passkeyRepository.GetUserWithActivePasskeys(userId, ct)
+                   ?? throw new NotFoundException($"User with ID: {userId} was not found");
+
+        var targetPasskey = user.Passkeys.FirstOrDefault(p => p.Id == passkeyId);
+
+        if (targetPasskey == null)
+        {
+            throw new ValidationException("Can't delete specified passkey");
+        }
+
+        targetPasskey.IsActive = false;
+        await unitOfWork.CommitAsync(ct);
+    }
 }

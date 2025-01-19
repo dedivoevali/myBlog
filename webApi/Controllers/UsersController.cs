@@ -54,7 +54,7 @@ namespace API.Controllers
         [UpdatesUserActivity]
         public async Task<IActionResult> GetPasskeyList(CancellationToken cancellationToken)
         {
-            var passkeys = await _userService.GetPasskeys(CurrentUserId, cancellationToken);
+            var passkeys = await _userService.GetActivePasskeys(CurrentUserId, cancellationToken);
             var model = _mapper.Map<PasskeyListModel>(passkeys);
             return Ok(model);
         }
