@@ -16,6 +16,7 @@ import {AxiosError, AxiosResponse} from "axios";
 import {ErrorResponse} from "../../shared/api/types";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { UserApi } from '../../shared/api/http/user-api';
+import { useTitle } from '../../hooks/use-title';
 
 const ProfilePage = () => {
 
@@ -24,10 +25,9 @@ const ProfilePage = () => {
     const [isLoading, setLoading] = useState<boolean>(true);
     const {userId} = useParams();
     const [visibleTabIndex, setVisibleTabIndex] = useState<number>(0);
-
+    
     const [pageRequestPostReel, setPageRequestPostReel] = useState<CursorPagedRequest>();
     const [pageRequestCommentReel, setPageRequestCommentReel] = useState<CursorPagedRequest>();
-
 
     const [hasError, setHasError] = useState<boolean>(false);
     const [errorText, setErrorText] = useState<string>("Error occurred");
@@ -47,6 +47,7 @@ const ProfilePage = () => {
         return {id: `simple-tab-${index}`, 'aria-controls': `simple-tabpanel-${index}`}
     };
 
+    useTitle(`${user?.username || "LOADING..."}`, [user?.username]);
     useEffect(() => {
         setLoading(true);
 

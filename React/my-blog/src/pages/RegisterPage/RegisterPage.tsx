@@ -1,12 +1,15 @@
 import React from 'react';
-import {RegistrationForm} from '../../components/RegistrationForm';
+import { RegistrationForm } from '../../components/RegistrationForm';
+import styles from "./profile-page.module.scss";
+import { useTitle } from '../../hooks/use-title';
 
 const RegisterPage = () => {
+    useTitle('REGISTER');
     return (
-        <div style={{padding: "15vh 0 0 0", margin: "0 auto", display: "flex", justifyContent: "space-around"}}>
-            <RegistrationForm/>
+        <div className={styles["container"]}>
+            <RegistrationForm />
         </div>
     );
 };
 
-export {RegisterPage};
+export { RegisterPage };

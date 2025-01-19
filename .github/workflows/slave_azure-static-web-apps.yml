@@ -23,6 +23,7 @@ jobs:
            touch .env
            echo REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} > .env
            echo HTTPS=true >> .env
+           echo REACT_APP_SITE_TITLE_PREFIX='prod' >> .env
            cat .env
       - name: Build And Deploy
         id: builddeploy

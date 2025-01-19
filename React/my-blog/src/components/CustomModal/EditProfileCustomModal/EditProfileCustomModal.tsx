@@ -34,9 +34,11 @@ import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { RegisterPasskeyButton } from '../../RegisterPasskeyButton';
 import { PasskeyList } from '../../PasskeyList/PasskeyList';
 import { UserApi } from '../../../shared/api/http/user-api';
+import { useDispatch } from 'react-redux';
+import { ReduxActionTypes } from '../../../redux';
 
 const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditProfileCustomModalProps) => {
-
+    const dispatch = useDispatch();
     const notifyUser = useNotifier();
     const formik = useFormik<UserInfoDto>({
         initialValues: {
@@ -56,15 +58,17 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
             }
 
             UserApi.editProfileOfAuthorizedUser(values).then((response) => {
-                setUser({
+                const newUserInfo: UserModel = {
                     ...response.data,
                     lastActivity: new Date().toUTCString(),
                     fullName: `${values.firstName} ${values.lastName}`,
                     username: values.username || user.username
-                });
+                };
+                setUser(newUserInfo);
 
                 notifyUser("User information was successfully updated", "success")
                 setModalOpen(false);
+                dispatch({type: ReduxActionTypes.ChangeUser, payload: newUserInfo });
                 formikHelpers.resetForm();
 
             }).catch((result: AxiosError<ErrorResponse>) => {

@@ -35,7 +35,7 @@ const HeaderUserInfoBar = ({ user }: HeaderUserInfoBarProps) => {
     return <React.Fragment>
         {
             isLoading ?
-            <CenteredLoader color="secondary" verticalMarginPx={10} sizePx={40}/> :
+            <CenteredLoader color="secondary" verticalMarginPx={10} sizePx={30}/> :
             <div className={styles["box"]}>
                 <Typography className={styles["box__caption"]}>Welcome, {userInfo?.username}!</Typography>
                 <AccountMenuDropdown icon={<Avatar src={avatarUrl}>{userInfo?.initials}</Avatar>} />

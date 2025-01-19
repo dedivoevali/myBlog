@@ -1,10 +1,12 @@
 import React from 'react';
-import {LoginForm} from '../../components';
+import { LoginForm } from '../../components';
+import styles from './login-page.module.scss';
+import { useTitle } from '../../hooks/use-title';
 
 const LoginPage = () => {
-
+    useTitle('LOGIN');
     return (
-        <div style={{padding: "15vh 0 0 0", margin: "0 auto", display: "flex", justifyContent: "space-around"}}>
+        <div className={styles["container"]}>
             <LoginForm/>
         </div>
     );

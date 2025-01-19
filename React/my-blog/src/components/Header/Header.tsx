@@ -9,7 +9,6 @@ import { HeaderUserInfoBar } from './HeaderUserInfoBar';
 
 const Header = () => {
     const user = useSelector<ApplicationState, (CurrentUserState | undefined | null)>(state => state.user);
-    console.log(user);
 
     return (
         <CustomNavbar>

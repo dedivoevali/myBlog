@@ -5,9 +5,11 @@ import {DefaultPageSize} from '../../shared/config';
 import {postApi} from "../../shared/api/http/api";
 import {PostModel} from '../../shared/api/types/post';
 import {AxiosResponse} from "axios";
-import {Box, CircularProgress, Typography} from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import CancelIcon from '@mui/icons-material/Cancel';
 import styles from './PostPage.module.scss';
+import { CenteredLoader } from '../../components/CenteredLoader';
+import { useTitle } from '../../hooks/use-title';
 
 const PostPage = () => {
     const {postId} = useParams();
@@ -18,6 +20,7 @@ const PostPage = () => {
 
     const redirectToMain = () => navigate(`/`);
 
+    useTitle(`${post?.title || 'POST NOT FOUND'}`, [ post ])
     useEffect(() => {
         setLoading(true);
 
@@ -39,7 +42,7 @@ const PostPage = () => {
                 isLoading
                     ?
                     <Box className={styles['loading-wrapper']}>
-                        <CircularProgress size={100}/>
+                        <CenteredLoader sizePx={50}/>
                     </Box>
                     :
                     (hasError
