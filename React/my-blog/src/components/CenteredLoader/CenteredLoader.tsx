@@ -1,10 +1,20 @@
 import React from 'react';
-import {Box, CircularProgress} from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
+import styles from "./centered-loader.module.scss";
+import { MUIColor } from '../../assets/mui-color';
 
-const CenteredLoader = () => {
+export interface CenteredLoaderProps {
+    color?: MUIColor;
+    verticalMarginPx?: number;
+    sizePx?: number;
+}
+
+const CenteredLoader = ({ color = "primary", verticalMarginPx = 50, sizePx = 40 }: CenteredLoaderProps) => {
     return (
-        <Box style={{margin: "50px auto", width: "fit-content"}}>
-            <CircularProgress/>
+        <Box
+            className={styles["container"]}
+            style={{ margin: `${verticalMarginPx}px auto`}}>
+            <CircularProgress size={`${sizePx}px`} color={color}/>
         </Box>
     );
 };

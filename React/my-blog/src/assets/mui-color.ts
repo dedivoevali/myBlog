@@ -1,0 +1,1 @@
+export type MUIColor = "primary" | "secondary" | "error" | "info" | "success" | "warning" | "inherit";

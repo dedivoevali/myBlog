@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Dto.Paging.CursorPaging;
 using Common.Dto.Post;
 using Common.Models;
 using Domain;
@@ -31,6 +32,9 @@ namespace Common.MappingProfiles
                 .ForMember(dst => dst.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dst => dst.Content, opt => opt.MapFrom(src => src.Content))
                 .ForMember(dst => dst.Topic, opt => opt.MapFrom(src => string.IsNullOrWhiteSpace(src.Topic) ? null : src.Topic));
+
+            CreateMap<CursorPagedResult<Post>, CursorPagedResult<PostModel>>()
+                .ForMember(dst => dst.Items, opt => opt.MapFrom(src => src.Items));
         }
     }
 }

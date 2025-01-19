@@ -73,20 +73,13 @@ namespace API.Controllers
 
         [AllowAnonymous]
         [HttpPost("paginated-search-cursor")]
-        public async Task<CursorPagedResult<PostModel>> GetCursorPagedPostsWithUsersTopicsAndCommentsAsync(
+        public async Task<CursorPagedResult<PostModel>> GetCursorPagedPostsAsync(
             [FromBody] CursorPagedRequest pagedRequest, CancellationToken cancellationToken)
         {
             var response =
                 await _postsService.GetCursorPageAsync(pagedRequest, cancellationToken, e => e.User, e => e.Comments);
 
-            return new CursorPagedResult<PostModel>()
-            {
-                PageSize = response.PageSize,
-                Total = response.Total,
-                Items = response.Items.Select(e => _mapper.Map<PostModel>(e)).ToList(),
-                HeadElementId = response.HeadElementId,
-                TailElementId = response.TailElementId
-            };
+            return _mapper.Map<CursorPagedResult<PostModel>>(response);
         }
     }
 }
