@@ -47,7 +47,7 @@ const ProfilePage = () => {
         return {id: `simple-tab-${index}`, 'aria-controls': `simple-tabpanel-${index}`}
     };
 
-    useTitle(`${user?.username || "LOADING..."}`, [user?.username]);
+    useTitle(`@${user?.username || "LOADING..."}`, [user?.username]);
     useEffect(() => {
         setLoading(true);
 

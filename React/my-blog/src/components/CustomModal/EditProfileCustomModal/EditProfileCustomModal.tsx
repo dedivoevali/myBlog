@@ -119,6 +119,7 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
         if (avatarFile) {
             avatarApi.UploadNewAvatarForAuthorizedUser(avatarFile).then((response) => {
                 notifyUser("Avatar was successfully loaded", "success");
+                dispatch({type: ReduxActionTypes.ChangeUser, payload: { ...user } });
             }).catch((error: AxiosError<ErrorResponse>) => {
                 notifyUser(error.response?.data.Message || "Error occurred while uploading avatar", "error");
             });
@@ -132,6 +133,7 @@ const EditProfileCustomModal = ({modalOpen, setModalOpen, user, setUser}: EditPr
         avatarApi.RemoveAvatarForAuthorizedUser().then(() => {
             notifyUser("Avatar was successfully removed", "success");
             setAvatarPreview("");
+            dispatch({type: ReduxActionTypes.ChangeUser, payload: { ...user } });
         }).catch((result: AxiosError<ErrorResponse>) => {
             notifyUser(result.response?.data.Message || "Unknown error", "error");
         });
