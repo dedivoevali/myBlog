@@ -1,0 +1,9 @@
+.box {
+    display: flex;
+    align-items: center;
+
+    &__caption {
+        display: inline;
+        font-weight: 600 !important;   
+    }
+}
