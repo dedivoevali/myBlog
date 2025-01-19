@@ -45,4 +45,11 @@ public class PasskeyAuthController(IPasskeyAuthService passkeyAuthService, IMapp
         HttpContext.AddRefreshTokenCookie(authenticateResponse.RefreshToken, authenticateResponse.RefreshTokenExpiresAt);
         return Ok(mapper.Map<AuthorizationResponseModel>(authenticateResponse));
     }
+
+    [HttpDelete("{id:int:min(0)}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken ct)
+    {
+        await passkeyAuthService.Deactivate(id, CurrentUserId, ct);
+        return Ok();
+    }
 }

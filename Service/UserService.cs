@@ -12,13 +12,15 @@ namespace Service
     {
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPasskeyRepository _passkeyRepository;
         private readonly IAvatarService _avatarService;
 
-        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, IAvatarService avatarService)
+        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, IAvatarService avatarService, IPasskeyRepository passkeyRepository)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _avatarService = avatarService;
+            _passkeyRepository = passkeyRepository;
         }
 
         public async Task<User> Add(User entity, CancellationToken cancellationToken)
@@ -92,11 +94,9 @@ namespace Service
             await _userRepository.Update(user, cancellationToken);
         }
 
-        public async Task<IEnumerable<Passkey>> GetPasskeys(int userId, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Passkey>> GetActivePasskeys(int userId, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdWithIncludeAsync(userId,
-                cancellationToken, 
-                e => e.Passkeys)
+            var user = await _passkeyRepository.GetUserWithActivePasskeys(userId, cancellationToken)
                  ?? throw new NotFoundException($"{nameof(User)} of ID: {userId} does not exist");
 
             return user.Passkeys;

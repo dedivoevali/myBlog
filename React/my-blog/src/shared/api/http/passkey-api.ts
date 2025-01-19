@@ -18,6 +18,7 @@ export class PasskeyApi {
     public authenticate = (request: PasskeyAuthenticationRequest): Promise<AuthenticateResponse> => this.instance.post(`/passkey/authenticate`, request).then((response) => response.data);
     public getRegistrationOptions = (): Promise<PasskeyRegistrationOptions> => this.instance.get<PasskeyRegistrationOptions>(`/passkey/registration-options`).then(response => response.data);
     public register = (options: IPasskeyRegistrationRequest): Promise<null> => this.instance.post(`/passkey/register`, options);
+    public deactivate = (id: number): Promise<null> => this.instance.delete(`/passkey/${id}`);
 }
 
 export const passkeyApi = new PasskeyApi(instance);
